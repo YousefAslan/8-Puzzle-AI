@@ -163,7 +163,8 @@ class _TestingState extends State<Testing> {
                             game.gameInitializer(
                                 boardSize: Tuple2(3, 3),
                                 goalBlocks: block2,
-                                initBlocks: block);
+                                initBlocks: block,
+                            heuristicType: HeuristicType.manhattanDistance);
                           }),
                       RaisedButton(
                           child: Text("display"),

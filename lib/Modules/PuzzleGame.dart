@@ -27,9 +27,9 @@ class PuzzleGame extends ChangeNotifier {
   bool gameInitializer(
       {Map<Tuple2<int, int>, int> initBlocks,
       Map<Tuple2<int, int>, int> goalBlocks,
-      Tuple2<int, int> boardSize}) {
+      Tuple2<int, int> boardSize,HeuristicType heuristicType}) {
     if (_initializeBoard) return false;
-
+    this.heuristicType = heuristicType;
     this._initializeBoard = true;
     this.boardSize = boardSize;
     this.gameBoard =
