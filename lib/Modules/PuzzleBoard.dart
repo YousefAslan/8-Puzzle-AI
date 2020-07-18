@@ -104,7 +104,6 @@ class PuzzleBoard {
     return false;
   }
 
-  //work fine
   @override
   bool operator ==(other) {
     bool toReturn = true;
@@ -144,7 +143,6 @@ class PuzzleBoard {
       temp += '\n';
     }
     return temp;
-//    return board.toString()+ boardSize.toString();
   }
 
   @override
@@ -164,7 +162,9 @@ class QueueEntityBoard implements Comparable {
 
   @override
   int compareTo(other) {
+//    if(this.currentBoard == other.currentBoard) return 0;
     int temp = (total()) - ((other as QueueEntityBoard).total());
-    return temp != 0 ? temp : (heuristic - other.heuristic > 0 ? -1 : 1 ) ;
+    temp *=-1;
+    return temp != 0 ? temp : heuristic - other.heuristic ;
   }
 }

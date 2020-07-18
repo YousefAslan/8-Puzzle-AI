@@ -4,13 +4,20 @@ import 'package:tuple/tuple.dart';
 import 'PuzzleBoard.dart';
 import 'package:async/async.dart';
 
+enum HeuristicType {
+  tilesDifferences,
+  manhattanDistance,
+  nilssonSequenceScore,
+}
+
 class PuzzleGame extends ChangeNotifier {
-  bool _initializeBoard, _win,_solvingCalled;
+  bool _initializeBoard, _win;
   Tuple2<int, int> boardSize;
   PuzzleBoard gameBoard, theGoalBoard;
+  HeuristicType heuristicType;
 
   PuzzleGame() {
-    _solvingCalled = false;
+    heuristicType = HeuristicType.manhattanDistance;
     _initializeBoard = false;
     _win = false;
   }
@@ -53,9 +60,12 @@ class PuzzleGame extends ChangeNotifier {
     int toReturn = 0;
     var temp = puzzleBoard.board;
     var keys = temp.keys;
-    theGoalBoard.board.forEach((key, value){
-      Tuple2<int, int> tempLocation = keys.firstWhere((e) => temp[e] == value, orElse: () => null);
-      toReturn += (tempLocation.item1 - key.item1).abs() + (tempLocation.item2 - key.item2).abs();
+    theGoalBoard.board.forEach((key, value) {
+      if(value ==  0 ) return;
+      Tuple2<int, int> tempLocation =
+          keys.firstWhere((e) => temp[e] == value, orElse: () => null);
+      toReturn += (tempLocation.item1 - key.item1).abs() +
+          (tempLocation.item2 - key.item2).abs();
     });
     return toReturn;
   }
@@ -65,16 +75,34 @@ class PuzzleGame extends ChangeNotifier {
     return 0;
   }
 
+  int computeHeuristic(PuzzleBoard puzzleBoard) {
+    int toReturn = 0;
+    switch (heuristicType) {
+      case HeuristicType.tilesDifferences:
+        toReturn = computeHeuristic1(puzzleBoard);
+        break;
+      case HeuristicType.manhattanDistance:
+        toReturn = computeHeuristic2(puzzleBoard);
+        break;
+      case HeuristicType.nilssonSequenceScore:
+        toReturn = computeHeuristic3(puzzleBoard);
+        break;
+    }
+    print("hu: $toReturn");
+    return toReturn;
+  }
+
   Queue<PuzzleBoard> aStarAlgorithm() {
-    HashMap<PuzzleBoard, int> closeHash = HashMap();
+    HashMap<PuzzleBoard,int> closeHash = HashMap();
     MyPriorityQueue openQueue = MyPriorityQueue();
+    MyPriorityQueue closeQueue = MyPriorityQueue();
 
     List<PuzzleBoard> children;
     QueueEntityBoard childEntity;
     int cost = 0;
     Queue<PuzzleBoard> tempQueue;
 
-    int tempHeuristic = computeHeuristic1(gameBoard);
+    int tempHeuristic = computeHeuristic(gameBoard);
     QueueEntityBoard bestEntity = QueueEntityBoard(
         currentBoard: gameBoard,
         cost: cost,
@@ -91,7 +119,7 @@ class PuzzleGame extends ChangeNotifier {
 
       children = bestEntity.currentBoard.getAvailableMoves();
       for (PuzzleBoard child in children) {
-        tempHeuristic = computeHeuristic1(child);
+        tempHeuristic = computeHeuristic(child);
         cost = bestEntity.cost + 1;
         tempQueue =
             Queue.of(bestEntity.recommendedSteps.whereType<PuzzleBoard>());
@@ -113,35 +141,38 @@ class PuzzleGame extends ChangeNotifier {
           } else if (closeHash.containsKey(child)) {
             if (closeHash[child] > childEntity.total()) {
               closeHash.remove(child);
+//              closeQueue.remove(childEntity);
               openQueue.add(childEntity);
             }
           }
         }
       }
+//      closeQueue.add(bestEntity);
       closeHash[bestEntity.currentBoard] = bestEntity.total();
     } while (openQueue.isNotEmpty);
 
     return null;
   }
-  void hint()
-  {
+
+  PuzzleBoard hint() {
     Queue solution = aStarAlgorithm();
     gameBoard = solution.removeFirst();
     notifyListeners();
+    return gameBoard;
   }
-  void solveTheProblem()
-  {
-    if(_solvingCalled)  return;
-    _solvingCalled = true;
+
+  Queue<PuzzleBoard> solveTheProblem()  {
+    var t = DateTime.now();
     Queue solution = aStarAlgorithm();
-    while(solution.isNotEmpty)
-      {
-        gameBoard = solution.removeFirst();
-        notifyListeners();
-        print("hello");
-        Future.delayed(Duration(milliseconds: 1000));
-      }
-    _solvingCalled = false;
+    return solution;
+    int i =0;
+    while (solution.isNotEmpty) {
+      print(i++);
+      gameBoard = solution.removeFirst();
+      notifyListeners();
+      print((DateTime.now().difference(t)).toString());
+//      Future.delayed(Duration(seconds: 5));
+    }
   }
 }
 
@@ -154,9 +185,7 @@ class MyPriorityQueue {
 
   void add(QueueEntityBoard toAdd) {
     _list.add(toAdd);
-    _list.sort((QueueEntityBoard a, QueueEntityBoard b) {
-      return a.total() - b.total();
-    });
+    _list.sort(compare);
   }
 
   QueueEntityBoard get first => _list.first;
@@ -169,9 +198,7 @@ class MyPriorityQueue {
 
   void removeFirst() {
     _list.removeAt(0);
-    _list.sort((QueueEntityBoard a, QueueEntityBoard b) {
-      return a.total() - b.total();
-    });
+    _list.sort(compare);
   }
 
   bool contains(PuzzleBoard puzzleBoard) {
@@ -202,19 +229,22 @@ class MyPriorityQueue {
 
   void remove(QueueEntityBoard childEntity) {
     bool temp = false;
-    int i = 0;
+    List toRemove = [];
 
     _list.forEach((element) {
-      i++;
       if (temp) return;
       if (element.currentBoard == childEntity.currentBoard) {
-        _list.removeAt(i);
+        toRemove.add(element);
         temp = true;
         return;
       }
     });
-    _list.sort((QueueEntityBoard a, QueueEntityBoard b) {
-      return a.total() - b.total();
-    });
+    _list.removeWhere((element) => toRemove.contains(element));
+    _list.sort(compare);
+  }
+
+  int compare(QueueEntityBoard a, QueueEntityBoard b) {
+    int temp = (a.total()) - b.total();
+    return temp != 0 ? temp : temp;
   }
 }

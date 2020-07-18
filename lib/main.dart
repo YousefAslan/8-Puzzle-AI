@@ -30,15 +30,15 @@ class Testing extends StatefulWidget {
 
 class _TestingState extends State<Testing> {
   final Map<Tuple2<int, int>, int> block = {
-    Tuple2(0, 0): 1,
+    Tuple2(0, 0): 8,
     Tuple2(0, 1): 2,
     Tuple2(0, 2): 3,
     Tuple2(1, 0): 4,
     Tuple2(1, 1): 5,
     Tuple2(1, 2): 6,
-    Tuple2(2, 0): 7,
-    Tuple2(2, 1): 8,
-    Tuple2(2, 2): 0
+    Tuple2(2, 0): 1,
+    Tuple2(2, 1): 0,
+    Tuple2(2, 2): 7
   };
   final Map<Tuple2<int, int>, int> block2 = {
     Tuple2(0, 0): 1,
@@ -65,8 +65,8 @@ class _TestingState extends State<Testing> {
             children: [
               Container(
                 padding: EdgeInsets.only(top: 20),
-                height: 250,
-                width: 250,
+                height: 300,
+                width: 300,
                 child:
                     Consumer<PuzzleGame>(builder: (context, puzzleGame, child) {
                   var temp = game.gameBoard.toList();
@@ -74,14 +74,20 @@ class _TestingState extends State<Testing> {
                     itemCount: (game.boardSize.item1 * game.boardSize.item2),
                     itemBuilder: (BuildContext ctxt, int index) {
                       return Container(
+                        width: 90,
+                        height: 90,
+                        color: temp[index] != 0 ? (Colors.blueGrey) : null,
                         key: Key(temp[index].toString()),
-                        padding: const EdgeInsets.all(8),
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(2),
                         margin: const EdgeInsets.all(8),
-                        child: Text(temp[index].toString()),
+                        child: temp[index] != 0
+                            ? Text(temp[index].toString())
+                            : null,
                       );
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
+                      crossAxisCount: game.boardSize.item1,
                     ),
                   );
                 }),
@@ -111,7 +117,7 @@ class _TestingState extends State<Testing> {
                   RaisedButton(
                       child: Text("solve"),
                       onPressed: () {
-                        var temp = game.solveTheProblem();
+                        game.solveTheProblem();
                       }),
                   RaisedButton(
                       child: Text("UP"),
@@ -122,14 +128,14 @@ class _TestingState extends State<Testing> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       RaisedButton(
-                          child: Text("Right"),
-                          onPressed: () {
-                            print(game.moveBlock(MovingDirection.RIGHT));
-                          }),
-                      RaisedButton(
                           child: Text("left"),
                           onPressed: () {
                             print(game.moveBlock(MovingDirection.LEFT));
+                          }),
+                      RaisedButton(
+                          child: Text("Right"),
+                          onPressed: () {
+                            print(game.moveBlock(MovingDirection.RIGHT));
                           }),
                     ],
                   ),
@@ -141,15 +147,15 @@ class _TestingState extends State<Testing> {
                   RaisedButton(
                       child: Text("hu"),
                       onPressed: () {
-                        print(game.computeHeuristic1(game.gameBoard));
+                        print(game.computeHeuristic(game.gameBoard));
                       }),
                   RaisedButton(
                       child: Text("hint"),
-                      onPressed: () {
-                        var temp = game.aStarAlgorithm();
-                        print("nhnhjdnjd");
-                        print(temp);
-//                        game.gameBoard = temp.removeFirst();
+                      onPressed: () async{
+                        var t = DateTime.now();
+                        game.hint().then((value) =>
+                            print((DateTime.now().difference(t)).toString()));
+                        print((DateTime.now().difference(t)).toString());
                       }),
                   Column(
                     children: [
