@@ -153,9 +153,7 @@ class _TestingState extends State<Testing> {
                       child: Text("hint"),
                       onPressed: () async{
                         var t = DateTime.now();
-                        game.hint().then((value) =>
-                            print((DateTime.now().difference(t)).toString()));
-                        print((DateTime.now().difference(t)).toString());
+                        game.hint();
                       }),
                   Column(
                     children: [
