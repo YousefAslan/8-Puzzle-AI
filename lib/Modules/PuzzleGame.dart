@@ -1,8 +1,8 @@
 import 'dart:collection';
 import 'package:flutter/cupertino.dart';
+import 'package:puzzleastar/Modules/modified-heap-priorityQueue.dart';
 import 'package:tuple/tuple.dart';
 import 'PuzzleBoard.dart';
-import 'package:async/async.dart';
 
 enum HeuristicType {
   tilesDifferences,
@@ -13,21 +13,21 @@ enum HeuristicType {
 class PuzzleGame extends ChangeNotifier {
   bool _initializeBoard, _win;
   Tuple2<int, int> boardSize;
-  PuzzleBoard gameBoard, theGoalBoard;
+  PuzzleBoard gameBoard, theGoalBoard, secondGoal;
   HeuristicType heuristicType;
 
   PuzzleGame() {
-    heuristicType = HeuristicType.manhattanDistance;
     _initializeBoard = false;
     _win = false;
   }
 
   get win => _win;
 
-  bool gameInitializer(
-      {Map<Tuple2<int, int>, int> initBlocks,
-      Map<Tuple2<int, int>, int> goalBlocks,
-      Tuple2<int, int> boardSize,HeuristicType heuristicType}) {
+  bool gameInitializer({Map<Tuple2<int, int>, int> initBlocks,
+    Map<Tuple2<int, int>, int> goalBlocks,
+    Map<Tuple2<int, int>, int> secondGoal,
+    Tuple2<int, int> boardSize,
+    HeuristicType heuristicType}) {
     if (_initializeBoard) return false;
     this.heuristicType = heuristicType;
     this._initializeBoard = true;
@@ -36,6 +36,8 @@ class PuzzleGame extends ChangeNotifier {
         PuzzleBoard.fromMap(boardSize: boardSize, blocks: initBlocks);
     this.theGoalBoard =
         PuzzleBoard.fromMap(boardSize: boardSize, blocks: goalBlocks);
+    this.secondGoal =
+        PuzzleBoard.fromMap(boardSize: boardSize, blocks: secondGoal);
     notifyListeners();
     return true;
   }
@@ -49,25 +51,40 @@ class PuzzleGame extends ChangeNotifier {
 
   int computeHeuristic1(PuzzleBoard puzzleBoard) {
     int toReturn = 0;
-    theGoalBoard.board.forEach((Tuple2 key, int value) {
-      if (puzzleBoard.board[key] != value) toReturn++;
+    int toReturn2 = 0;
+    puzzleBoard.board.forEach((Tuple2 key, int value) {
+      if (value != 0) {
+        if (theGoalBoard.board[key] != value) toReturn++;
+        if (secondGoal.board[key] != value) toReturn2++;
+      }
     });
-    return toReturn;
+    return toReturn < toReturn2 ? toReturn : toReturn2;
   }
 
   int computeHeuristic2(PuzzleBoard puzzleBoard) {
-    Tuple2<int, int> tempLocation;
     int toReturn = 0;
-    var temp = puzzleBoard.board;
+    int toReturn2 = 0;
+
+    var temp = theGoalBoard.board;
     var keys = temp.keys;
-    theGoalBoard.board.forEach((key, value) {
-      if(value ==  0 ) return;
-      Tuple2<int, int> tempLocation =
-          keys.firstWhere((e) => temp[e] == value, orElse: () => null);
-      toReturn += (tempLocation.item1 - key.item1).abs() +
-          (tempLocation.item2 - key.item2).abs();
+
+    var temp2 = secondGoal.board;
+    var keys2 = temp2.keys;
+
+    puzzleBoard.board.forEach((key, value) {
+      if (value != 0) {
+        Tuple2<int, int> tempLocation =
+        keys.firstWhere((e) => temp[e] == value, orElse: () => null);
+        toReturn += (tempLocation.item1 - key.item1).abs() +
+            (tempLocation.item2 - key.item2).abs();
+
+        tempLocation =
+            keys2.firstWhere((e) => temp2[e] == value, orElse: () => null);
+        toReturn2 += (tempLocation.item1 - key.item1).abs() +
+            (tempLocation.item2 - key.item2).abs();
+      }
     });
-    return toReturn;
+    return toReturn < toReturn2 ? toReturn : toReturn2;
   }
 
   int computeHeuristic3(PuzzleBoard puzzleBoard) {
@@ -77,174 +94,108 @@ class PuzzleGame extends ChangeNotifier {
 
   int computeHeuristic(PuzzleBoard puzzleBoard) {
     int toReturn = 0;
+
+    toReturn += computeHeuristic1(puzzleBoard);
     switch (heuristicType) {
       case HeuristicType.tilesDifferences:
-        toReturn = computeHeuristic1(puzzleBoard);
+        toReturn += computeHeuristic1(puzzleBoard);
         break;
       case HeuristicType.manhattanDistance:
-        toReturn = computeHeuristic2(puzzleBoard);
+        toReturn += computeHeuristic2(puzzleBoard);
         break;
       case HeuristicType.nilssonSequenceScore:
         toReturn = computeHeuristic3(puzzleBoard);
         break;
     }
-    print("hu: $toReturn");
     return toReturn;
   }
 
-  Queue<PuzzleBoard> aStarAlgorithm() {
-    HashMap<PuzzleBoard,int> closeHash = HashMap();
-    MyPriorityQueue openQueue = MyPriorityQueue();
-    MyPriorityQueue closeQueue = MyPriorityQueue();
+  bool isEqual(QueueEntityBoard a, QueueEntityBoard b) {
+    return (a.currentBoard == b.currentBoard);
+  }
 
-    List<PuzzleBoard> children;
-    QueueEntityBoard childEntity;
-    int cost = 0;
-    Queue<PuzzleBoard> tempQueue;
+  int compare(QueueEntityBoard a, QueueEntityBoard b) {
+    int theTotalDifference = a.total() - b.total();
+    if (theTotalDifference != 0)
+      return theTotalDifference;
+    else
+      return a.heuristic - b.heuristic;
+  }
 
-    int tempHeuristic = computeHeuristic(gameBoard);
-    QueueEntityBoard bestEntity = QueueEntityBoard(
+//  Queue<PuzzleBoard> aStarAlgorithm() {
+  List<PuzzleBoard> aStarAlgorithm() {
+    ModifiedHeapPriorityQueue<QueueEntityBoard> open =
+    ModifiedHeapPriorityQueue(isEqual, compare);
+    HashMap<PuzzleBoard, int> closeList = HashMap();
+
+    int cost = 0,
+        heuristic = computeHeuristic(gameBoard);
+//    Queue<PuzzleBoard> steps = Queue<PuzzleBoard>();
+    List<PuzzleBoard> steps2 = [];
+    QueueEntityBoard best = QueueEntityBoard(
         currentBoard: gameBoard,
         cost: cost,
-        heuristic: tempHeuristic,
-        recommendedSteps: Queue());
-    openQueue.add(bestEntity);
+        heuristic: heuristic,
+//        recommendedSteps: steps,
+        recommendedSteps1: steps2);
+    open.add(best);
 
-    do {
-      if (openQueue.isEmpty) return null;
-      bestEntity = openQueue.first;
-      openQueue.removeFirst();
-      if (bestEntity.currentBoard == theGoalBoard)
-        return bestEntity.recommendedSteps;
+    List<PuzzleBoard> children;
+    QueueEntityBoard childEntity, insideOpen;
 
-      children = bestEntity.currentBoard.getAvailableMoves();
+    int j = 0;
+    while (open.isNotEmpty) {
+      print("iteration #${j++}");
+      best = open.removeFirst();
+      if (best.currentBoard == theGoalBoard ||
+          best.currentBoard == secondGoal) {
+        print("find solution${best.currentBoard}");
+//        return best.recommendedSteps;
+        return best.recommendedSteps1;
+      }
+      cost = best.cost + 1;
+      children = best.currentBoard.getAvailableMoves();
       for (PuzzleBoard child in children) {
-        tempHeuristic = computeHeuristic(child);
-        cost = bestEntity.cost + 1;
-        tempQueue =
-            Queue.of(bestEntity.recommendedSteps.whereType<PuzzleBoard>());
-        tempQueue.add(child);
+        if(best.recommendedSteps1.length !=0 && child == best.recommendedSteps1.last)
+          continue;
+        heuristic = computeHeuristic(child);
+        steps2 = []
+          ..addAll(best.recommendedSteps1)
+          ..add(child);
+//        steps = Queue.of(best.recommendedSteps.whereType<PuzzleBoard>());
+//        steps.add(child);
         childEntity = QueueEntityBoard(
             currentBoard: child,
             cost: cost,
-            heuristic: tempHeuristic,
-            recommendedSteps: tempQueue);
-
-        if (!(openQueue.contains(child)) && !(closeHash.containsKey(child))) {
-          openQueue.add(childEntity);
-        } else {
-          if (openQueue.contains(child)) {
-            if (openQueue.getTotal(child) > childEntity.total()) {
-              openQueue.remove(childEntity);
-              openQueue.add(childEntity);
-            }
-          } else if (closeHash.containsKey(child)) {
-            if (closeHash[child] > childEntity.total()) {
-              closeHash.remove(child);
-//              closeQueue.remove(childEntity);
-              openQueue.add(childEntity);
-            }
-          }
+            heuristic: heuristic,
+//            recommendedSteps: steps,
+            recommendedSteps1: steps2);
+        insideOpen = open.containsObject(childEntity);
+        if (insideOpen == null && !closeList.containsKey(child)) {
+          open.add(childEntity);
+        } else if (insideOpen != null && compare(childEntity, insideOpen) < 0) {
+          open.remove(insideOpen);
+          open.add(childEntity);
+        } else if (closeList.containsKey(child) &&
+            childEntity.cost - closeList[child] < 0) {
+          closeList.remove(child);
+          open.add(childEntity);
         }
       }
-//      closeQueue.add(bestEntity);
-      closeHash[bestEntity.currentBoard] = bestEntity.total();
-    } while (openQueue.isNotEmpty);
-
+      closeList[best.currentBoard] = best.cost;
+    }
     return null;
   }
 
   PuzzleBoard hint() {
-    Queue solution = aStarAlgorithm();
-    gameBoard = solution.removeFirst();
+    List solution = aStarAlgorithm();
+    gameBoard = solution[0];
     notifyListeners();
     return gameBoard;
   }
 
-  Queue<PuzzleBoard> solveTheProblem()  {
-    var t = DateTime.now();
-    Queue solution = aStarAlgorithm();
+  List<PuzzleBoard> solveTheProblem() {
+    List solution = aStarAlgorithm();
     return solution;
-    int i =0;
-    while (solution.isNotEmpty) {
-      print(i++);
-      gameBoard = solution.removeFirst();
-      notifyListeners();
-      print((DateTime.now().difference(t)).toString());
-//      Future.delayed(Duration(seconds: 5));
-    }
-  }
-}
-
-class MyPriorityQueue {
-  List<QueueEntityBoard> _list;
-
-  MyPriorityQueue() {
-    _list = [];
-  }
-
-  void add(QueueEntityBoard toAdd) {
-    _list.add(toAdd);
-    _list.sort(compare);
-  }
-
-  QueueEntityBoard get first => _list.first;
-
-  bool get isNotEmpty => _list.length > 0;
-
-  bool get isEmpty => _list.length <= 0;
-
-  List<QueueEntityBoard> get list => _list;
-
-  void removeFirst() {
-    _list.removeAt(0);
-    _list.sort(compare);
-  }
-
-  bool contains(PuzzleBoard puzzleBoard) {
-    bool toReturn = false;
-    _list.forEach((element) {
-      if (toReturn) return;
-      if (element.currentBoard == puzzleBoard) {
-        toReturn = true;
-        return;
-      }
-    });
-    return toReturn;
-  }
-
-  int getTotal(PuzzleBoard puzzleBoard) {
-    var toReturn;
-    bool temp = false;
-    _list.forEach((element) {
-      if (temp) return;
-      if (element.currentBoard == puzzleBoard) {
-        temp = true;
-        toReturn = element.total();
-        return;
-      }
-    });
-    return toReturn;
-  }
-
-  void remove(QueueEntityBoard childEntity) {
-    bool temp = false;
-    List toRemove = [];
-
-    _list.forEach((element) {
-      if (temp) return;
-      if (element.currentBoard == childEntity.currentBoard) {
-        toRemove.add(element);
-        temp = true;
-        return;
-      }
-    });
-    _list.removeWhere((element) => toRemove.contains(element));
-    _list.sort(compare);
-  }
-
-  int compare(QueueEntityBoard a, QueueEntityBoard b) {
-    int temp = (a.total()) - b.total();
-    return temp != 0 ? temp : temp;
   }
 }

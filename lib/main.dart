@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,16 +32,37 @@ class Testing extends StatefulWidget {
 class _TestingState extends State<Testing> {
   final Map<Tuple2<int, int>, int> block = {
     Tuple2(0, 0): 8,
+    Tuple2(0, 1): 7,
+    Tuple2(0, 2): 6,
+    Tuple2(1, 0): 5,
+    Tuple2(1, 1): 4,
+    Tuple2(1, 2): 3,
+    Tuple2(2, 0): 2,
+    Tuple2(2, 1): 1,
+    Tuple2(2, 2): 0
+//
+//     Tuple2(0, 0): 1,
+//     Tuple2(0, 1): 2,
+//     Tuple2(0, 2): 3,
+//     Tuple2(1, 0): 4,
+//     Tuple2(1, 1): 5,
+//     Tuple2(1, 2): 6,
+//     Tuple2(2, 0): 7,
+//     Tuple2(2, 1): 8,
+//     Tuple2(2, 2): 0
+  };
+  final Map<Tuple2<int, int>, int> block2 = {
+    Tuple2(0, 0): 1,
     Tuple2(0, 1): 2,
     Tuple2(0, 2): 3,
     Tuple2(1, 0): 4,
     Tuple2(1, 1): 5,
     Tuple2(1, 2): 6,
-    Tuple2(2, 0): 1,
-    Tuple2(2, 1): 0,
-    Tuple2(2, 2): 7
+    Tuple2(2, 0): 7,
+    Tuple2(2, 1): 8,
+    Tuple2(2, 2): 0
   };
-  final Map<Tuple2<int, int>, int> block2 = {
+  final Map<Tuple2<int, int>, int> block3 = {
     Tuple2(0, 0): 1,
     Tuple2(0, 1): 2,
     Tuple2(0, 2): 3,
@@ -115,14 +137,56 @@ class _TestingState extends State<Testing> {
                         print("ava:$temp");
                       }),
                   RaisedButton(
-                      child: Text("solve"),
+                      child: Text("dialog"),
                       onPressed: () {
-                        game.solveTheProblem();
+                        var t = DateTime.now();
+                        List temp= game.solveTheProblem();
+                        print((DateTime.now().difference(t)).toString());
+                        showDialog<void>(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text((DateTime.now().difference(t)).toString()),
+                              content: SingleChildScrollView(
+                                child: Text(temp.toString())
+                              ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text('Approve'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }),
+                  RaisedButton(
+                      child: Text("solve"),
+                      onPressed: () async{
+                        var t = DateTime.now();
+                       List<PuzzleBoard>temp= game.solveTheProblem();
+                        print((DateTime.now().difference(t)).toString());
+                       print(temp);
+                       print(temp.length);
+                        const oneSec = const Duration(milliseconds: 300);
+                        Timer.periodic(oneSec, (timer) {
+                          if(temp.length !=0)
+                            {
+                              setState(() {
+                                game.gameBoard = temp.removeAt(0);
+                              });
+                            }
+                          else timer.cancel();
+                        });
                       }),
                   RaisedButton(
                       child: Text("UP"),
                       onPressed: () {
-                        print(game.moveBlock(MovingDirection.UP));
+                        // ignore: unnecessary_statements
+                        (game.moveBlock(MovingDirection.UP));
                       }),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -130,29 +194,32 @@ class _TestingState extends State<Testing> {
                       RaisedButton(
                           child: Text("left"),
                           onPressed: () {
-                            print(game.moveBlock(MovingDirection.LEFT));
+                            // ignore: unnecessary_statements
+                            (game.moveBlock(MovingDirection.LEFT));
                           }),
                       RaisedButton(
                           child: Text("Right"),
                           onPressed: () {
-                            print(game.moveBlock(MovingDirection.RIGHT));
+                            // ignore: unnecessary_statements
+                            (game.moveBlock(MovingDirection.RIGHT));
                           }),
                     ],
                   ),
                   RaisedButton(
                       child: Text("down"),
                       onPressed: () {
-                        print(game.moveBlock(MovingDirection.DOWN));
+                        // ignore: unnecessary_statements
+                        (game.moveBlock(MovingDirection.DOWN));
                       }),
                   RaisedButton(
                       child: Text("hu"),
                       onPressed: () {
-                        print(game.computeHeuristic(game.gameBoard));
+                        print(game.computeHeuristic2(game.gameBoard));
                       }),
                   RaisedButton(
                       child: Text("hint"),
-                      onPressed: () async{
-                        var t = DateTime.now();
+                      onPressed: () async {
+//                        var t = DateTime.now();
                         game.hint();
                       }),
                   Column(
@@ -164,15 +231,20 @@ class _TestingState extends State<Testing> {
                                 boardSize: Tuple2(3, 3),
                                 goalBlocks: block2,
                                 initBlocks: block,
-                            heuristicType: HeuristicType.manhattanDistance);
+                                secondGoal: block3,
+                                heuristicType: HeuristicType.manhattanDistance);
                           }),
                       RaisedButton(
                           child: Text("display"),
                           onPressed: () {
+                            print("bfhfhjfjf");
                             print(game.gameBoard);
                             print("------------------------");
                             print(game.theGoalBoard);
                             print("------------------------");
+                            print(game.secondGoal);
+                            print("------------------------");
+                            print("bfhfhjfjf");
                           }),
                     ],
                   )

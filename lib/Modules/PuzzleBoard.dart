@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:tuple/tuple.dart';
 import 'package:quiver/core.dart';
@@ -8,7 +7,7 @@ enum MovingDirection { UP, RIGHT, LEFT, DOWN }
 
 class PuzzleBoard {
   static int emptyBlock = 0;
-  final Tuple2<int, int> boardSize;
+  Tuple2<int, int> boardSize;
   HashMap<Tuple2<int, int>, int> board;
 
   PuzzleBoard.fromMap({this.boardSize, Map<Tuple2<int, int>, int> blocks}) {
@@ -20,7 +19,6 @@ class PuzzleBoard {
     this.board = HashMap.fromEntries(puzzleBoard.board.entries);
   }
 
-  //TODO: i don't know if we need this method
   bool addToBoard(Tuple2<int, int> location, int value) {
     if (board.containsKey(location) || board.containsValue(value)) return false;
     if (location.item1 < 0 ||
@@ -32,7 +30,6 @@ class PuzzleBoard {
     return true;
   }
 
-  //work fine
   List<PuzzleBoard> getAvailableMoves() {
     int tempValue;
     PuzzleBoard tempBoard;
@@ -71,7 +68,6 @@ class PuzzleBoard {
     return toReturnedList;
   }
 
-  //work fine
   bool moveBlock(MovingDirection direction) {
     int tempValue;
     Tuple2<int, int> oldLocation, newLocation;
@@ -104,29 +100,13 @@ class PuzzleBoard {
     return false;
   }
 
-  @override
-  bool operator ==(other) {
-    bool toReturn = true;
-    if(this == null || other == null) return false;
-    if (!(other is PuzzleBoard)) return false;
-    if (this.boardSize != other.boardSize) return false;
-    this.board.forEach((Tuple2 key, int value) {
-      if (toReturn == false) return;
-      if ((!other.board.containsKey(key)) || (other.board[key] != value)) {
-        toReturn = false;
+  List toList() {
+    List temp = [];
+    for (int i = 0; i < boardSize.item1; i++) {
+      for (int j = 0; j < boardSize.item1; j++) {
+        temp.add(board[Tuple2(i, j)]);
       }
-    });
-    return toReturn;
-  }
-  List toList(){
-    List temp =[];
-    for(int i =0; i< boardSize.item1;i++)
-      {
-        for(int j =0; j< boardSize.item1;j++)
-          {
-            temp.add(board[Tuple2(i,j)]);
-          }
-      }
+    }
     return temp;
   }
 
@@ -146,25 +126,45 @@ class PuzzleBoard {
   }
 
   @override
-  int get hashCode => hash2(board.hashCode, boardSize.hashCode);
+  bool operator ==(other) {
+    bool toReturn = true;
+    if (this == null || other == null) return false;
+    if (!(other is PuzzleBoard)) return false;
+    // ignore: test_types_in_equals
+    if (this.boardSize != (other as PuzzleBoard).boardSize) {
+      return false;
+    }
+
+    this.board.forEach((Tuple2 key, int value) {
+      if (toReturn == false) return;
+      if ((!other.board.containsKey(key)) || (other.board[key] != value)) {
+        toReturn = false;
+      }
+    });
+    return toReturn;
+  }
+
+  @override
+  int get hashCode => hash2(2, boardSize.hashCode);
 }
 
 class QueueEntityBoard implements Comparable {
   final PuzzleBoard currentBoard;
   final int cost;
   final int heuristic;
-  Queue<PuzzleBoard> recommendedSteps;
+//  Queue<PuzzleBoard> recommendedSteps;
+  List<PuzzleBoard> recommendedSteps1;
+
 
   QueueEntityBoard(
-      {this.currentBoard, this.cost, this.heuristic, this.recommendedSteps});
+      {this.currentBoard, this.cost, this.heuristic,this.recommendedSteps1});
+//      {this.currentBoard, this.cost, this.heuristic, this.recommendedSteps,this.recommendedSteps1});
 
   int total() => cost + heuristic;
 
   @override
   int compareTo(other) {
-//    if(this.currentBoard == other.currentBoard) return 0;
     int temp = (total()) - ((other as QueueEntityBoard).total());
-    temp *=-1;
-    return temp != 0 ? temp : heuristic - other.heuristic ;
+    return temp != 0 ? temp : heuristic - other.heuristic;
   }
 }
