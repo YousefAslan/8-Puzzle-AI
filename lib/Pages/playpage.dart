@@ -151,22 +151,27 @@ class _PlayPageState extends State<PlayPage>
     );
 
     Widget progressBar = Container(
-
       margin: EdgeInsets.symmetric(
-        horizontal: 15,
+        horizontal: 20,
         vertical: 25,
       ),
-
       padding: EdgeInsets.symmetric(
-        vertical: 15,
+        vertical: 10,
       ),
       decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 1),
+            color: Color.fromRGBO(14, 36, 23, .2),
+            blurRadius: 2,
+          ),
+        ],
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             width: 50,
@@ -184,7 +189,7 @@ class _PlayPageState extends State<PlayPage>
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                  bottom: 10,
+                  bottom: 1,
                 ),
                 child: Text(
                   "Progress",
@@ -194,9 +199,13 @@ class _PlayPageState extends State<PlayPage>
                   ),
                 ),
               ),
-              SizedBox(
+              Text(
+                "Manhattan Distance"
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 5),
                 width: 270,
-                height: 14,
+                height: 12,
                 child: LinearProgressIndicator(
                   backgroundColor: Colors.grey[200],
                   value: Provider.of<PuzzleGame>(context).progress1,
@@ -213,9 +222,6 @@ class _PlayPageState extends State<PlayPage>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-//          margin: EdgeInsets.only(
-//            left: 20,
-//          ),
           width: 60,
           height: 60,
           decoration: BoxDecoration(
@@ -330,6 +336,9 @@ class _PlayPageState extends State<PlayPage>
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          SizedBox(
+            height: 10,
+          ),
           timer,
           progressBar,
           Center(

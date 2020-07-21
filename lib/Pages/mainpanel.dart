@@ -12,6 +12,7 @@ class MainPanel extends StatefulWidget {
 class _MainPanelState extends State<MainPanel> {
   List<HeuristicType> selectedAlgorithm = [HeuristicType.tilesDifferences];
   int size;
+
   @override
   void initState() {
     super.initState();
@@ -22,21 +23,22 @@ class _MainPanelState extends State<MainPanel> {
   Widget build(BuildContext context) {
     Widget title = Container(
       padding: EdgeInsets.only(
-        top: 14,
-        bottom: 25,
+        top: 20,
+        bottom: 10,
       ),
       child: Text(
         "8 Puzzle",
         style: TextStyle(
           color: Colors.white,
           fontSize: 35,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
+            fontFamily: 'relway-semibold'
         ),
       ),
     );
 
     Widget subtitle = Text(
-      "Try solving the very famous \n8 Puzzle and compete\nwith puzzle solvers from \nall around the world!",
+      "Try solving the very famous 8 Puzzle and compete with puzzle solvers from all around the world!",
       softWrap: true,
       style: TextStyle(
           fontSize: 20,
@@ -46,9 +48,6 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget sizeText = Container(
-      padding: EdgeInsets.only(
-        top: 34,
-      ),
       child: Text(
         "Please select the board size",
         style: TextStyle(
@@ -64,11 +63,11 @@ class _MainPanelState extends State<MainPanel> {
         primaryColorDark: Colors.red,
       ),
       child: Container(
-        margin: EdgeInsets.only(right: 150, top: 15),
+        width: 250,
         child: TextField(
           decoration: InputDecoration(
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
+              borderRadius: BorderRadius.circular(50),
             ),
             fillColor: Colors.white,
             filled: true,
@@ -83,16 +82,16 @@ class _MainPanelState extends State<MainPanel> {
           style: TextStyle(fontSize: 20),
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
-            WhitelistingTextInputFormatter.digitsOnly
+            WhitelistingTextInputFormatter.digitsOnly,
           ],
         ),
       ),
     );
 
     Widget heuristicText = Container(
-      padding: EdgeInsets.only(
-        top: 27,
-      ),
+//      padding: EdgeInsets.only(
+//        top: 27,
+//      ),
       child: Text(
         "Choose the heuristic algorithm",
         style: TextStyle(
@@ -104,79 +103,85 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget heuristicFeild = Container(
-      margin: EdgeInsets.only(top: 27, right: 100),
+      width: 250,
+      height: 65,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(50),
         color: Color.fromRGBO(41, 41, 41, 1),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                if (selectedAlgorithm.contains(HeuristicType.tilesDifferences))
-                  selectedAlgorithm.remove(HeuristicType.tilesDifferences);
-                else
-                  selectedAlgorithm.add(HeuristicType.tilesDifferences);
-              });
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                vertical: 2,
-                horizontal: 4,
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color:
-                    selectedAlgorithm.contains(HeuristicType.tilesDifferences)
-                        ? Color.fromRGBO(255, 170, 0, 1)
-                        : Color.fromRGBO(41, 41, 41, 1),
-              ),
-              child: Text(
-                "Tiles\nDifference",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+          Flexible(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (selectedAlgorithm
+                      .contains(HeuristicType.tilesDifferences))
+                    selectedAlgorithm.remove(HeuristicType.tilesDifferences);
+                  else
+                    selectedAlgorithm.add(HeuristicType.tilesDifferences);
+                });
+              },
+              child: Container(
+                height: 70,
+                alignment:Alignment.center ,
+                margin: EdgeInsets.symmetric(
+                  vertical: 3,
+                  horizontal: 3,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color:
+                      selectedAlgorithm.contains(HeuristicType.tilesDifferences)
+                          ? Color.fromRGBO(255, 170, 0, 1)
+                          : Color.fromRGBO(41, 41, 41, 1),
+                ),
+                child: Text(
+                  "Tiles\nDifference",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                if (selectedAlgorithm.contains(HeuristicType.manhattanDistance))
-                  selectedAlgorithm.remove(HeuristicType.manhattanDistance);
-                else
-                  selectedAlgorithm.add(HeuristicType.manhattanDistance);
-              });
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                vertical: 2,
-                horizontal: 4,
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: 25,
-                vertical: 10,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color:
-                    selectedAlgorithm.contains(HeuristicType.manhattanDistance)
-                        ? Color.fromRGBO(255, 170, 0, 1)
-                        : Color.fromRGBO(41, 41, 41, 1),
-              ),
-              child: Text(
-                "Manhattan\nDistance",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+          Flexible(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (selectedAlgorithm
+                      .contains(HeuristicType.manhattanDistance))
+                    selectedAlgorithm.remove(HeuristicType.manhattanDistance);
+                  else
+                    selectedAlgorithm.add(HeuristicType.manhattanDistance);
+                });
+              },
+              child: Container(
+                height: 70,
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(
+                  vertical: 3,
+                  horizontal: 3,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: selectedAlgorithm
+                          .contains(HeuristicType.manhattanDistance)
+                      ? Color.fromRGBO(255, 170, 0, 1)
+                      : Color.fromRGBO(41, 41, 41, 1),
+                ),
+                child: Text(
+                  "Manhattan Distance",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -186,7 +191,7 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget playButton = Padding(
-      padding: EdgeInsets.only(top: 65, left: 90),
+      padding: EdgeInsets.only(right: 10, bottom: 12),
       child: RaisedButton(
         color: Color.fromRGBO(21, 146, 230, 1),
         shape: RoundedRectangleBorder(
@@ -222,9 +227,10 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.only(left: 15),
           margin: EdgeInsets.only(
             top: 30,
             bottom: 30,
@@ -239,15 +245,33 @@ class _MainPanelState extends State<MainPanel> {
               Color.fromRGBO(14, 36, 83, 1)
             ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
           ),
-          child: ListView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              title,
-              subtitle,
-              sizeText,
-              sizeFeild,
-              heuristicText,
-              heuristicFeild,
-              playButton,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  title,
+                  subtitle,
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Wrap(
+                    runSpacing: 12,
+                    children: [
+                      sizeText,
+                      sizeFeild,
+                      heuristicText,
+                      heuristicFeild,
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                alignment: Alignment.bottomRight,
+                child: playButton,
+              ),
             ],
           ),
         ),

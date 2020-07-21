@@ -65,7 +65,8 @@ class _ArrangePageState extends State<ArrangePage> {
         "8 Puzzle",
         style: TextStyle(
           fontSize: 35,
-          fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'relway-semibold'
         ),
       ),
     );

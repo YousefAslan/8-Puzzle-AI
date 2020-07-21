@@ -143,10 +143,10 @@ class PuzzleGame extends ChangeNotifier {
   }
 
   double get progress1 =>
-      (maxDistance - computeHeuristic2(gameBoard)) / maxDistance;
+      (maxDistance - computeHeuristic2(gameBoard)) / (maxDistance.toDouble());
 
   double get progress2 =>
-      (maxDifference - computeHeuristic1(gameBoard)) / maxDifference;
+      (maxDifference - computeHeuristic1(gameBoard)) / (maxDifference.toDouble());
 
   int computeHeuristic3(PuzzleBoard puzzleBoard) {
     //TODO: not implemented yet
@@ -182,6 +182,8 @@ class PuzzleGame extends ChangeNotifier {
         break;
       case HeuristicType.manhattanDistance:
         toReturn += computeHeuristic2Static(puzzleBoard, goalBoard, secondGoal);
+        break;
+      case HeuristicType.nilssonSequenceScore:
         break;
     }
     return toReturn;
@@ -230,13 +232,13 @@ class PuzzleGame extends ChangeNotifier {
     List<PuzzleBoard> children;
     QueueEntityBoard childEntity, insideOpen;
 
-    int j = 0;
+//    int j = 0;
     while (open.isNotEmpty) {
-      print("iteration #${j++}");
+//      print("iteration #${j++}");
       best = open.removeFirst();
       if (best.currentBoard == theGoalBoard ||
           best.currentBoard == secondGoal) {
-        print("find solution${best.currentBoard}");
+//        print("find solution${best.currentBoard}");
 //        return best.recommendedSteps;
         return best.recommendedSteps1;
       }
@@ -300,13 +302,13 @@ class PuzzleGame extends ChangeNotifier {
     List<PuzzleBoard> children;
     QueueEntityBoard childEntity, insideOpen;
 
-    int j = 0;
+//    int j = 0;
     while (open.isNotEmpty) {
-      print("iteration #${j++}");
+//      print("iteration #${j++}");
       best = open.removeFirst();
       if (best.currentBoard == goalState ||
           best.currentBoard == secondGoalState) {
-        print("find solution${best.currentBoard}");
+//        print("find solution${best.currentBoard}");
 //        return best.recommendedSteps;
         return best.recommendedSteps1;
       }

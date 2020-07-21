@@ -107,6 +107,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
           Opacity(
             opacity: win ? 0.5 : 1,
             child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
               padding: EdgeInsets.only(top: 0, bottom: 0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: size,
