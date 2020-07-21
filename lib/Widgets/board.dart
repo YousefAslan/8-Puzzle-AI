@@ -3,7 +3,6 @@ import 'dart:collection';
 
 import 'package:ai_first_project/Modules/PuzzleBoard.dart';
 import 'package:ai_first_project/Modules/PuzzleGame.dart';
-import 'package:ai_first_project/sizeconfig.dart';
 import 'package:ai_first_project/Widgets/tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -93,11 +92,11 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
     }
 
     return Container(
-      width: SizeConfig.blockSizeHorizontal * 90,
-      height: SizeConfig.blockSizeVertical * 54,
+      width: 373,
+      height: 370,
       padding: EdgeInsets.symmetric(
-        horizontal: SizeConfig.blockSizeHorizontal,
-        vertical: SizeConfig.blockSizeVertical,
+        horizontal: 5,
+        vertical: 6,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
@@ -108,11 +107,11 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
           Opacity(
             opacity: win ? 0.5 : 1,
             child: GridView.builder(
-              padding: EdgeInsets.only(top: 0),
+              padding: EdgeInsets.only(top: 0, bottom: 0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: size,
-                crossAxisSpacing: SizeConfig.blockSizeHorizontal * 4 / size,
-                mainAxisSpacing: SizeConfig.blockSizeVertical * 1 / size,
+                crossAxisSpacing: 16.5 / size,
+                mainAxisSpacing: 7 / size,
               ),
               itemBuilder: (context, index) {
                 Tuple2<int, int> location =

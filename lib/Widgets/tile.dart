@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:ai_first_project/Modules/PuzzleBoard.dart';
-import 'package:ai_first_project/sizeconfig.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
@@ -53,7 +52,7 @@ class _PuzzleTileState extends State<PuzzleTile> with TickerProviderStateMixin {
   AnimationController horizontalAnimationController;
   Animation<double> verticalAnimation;
   AnimationController verticalAnimationController;
-  bool up, down, left, right;
+
   bool moving = false;
 
   void move() {
@@ -74,31 +73,28 @@ class _PuzzleTileState extends State<PuzzleTile> with TickerProviderStateMixin {
     verticalAnimationController =
         AnimationController(duration: Duration(milliseconds: 150), vsync: this);
 
-    horizontalAnimation = Tween<double>(
-            begin: 0,
-            end: SizeConfig.blockSizeHorizontal * 85 / widget.boardSize)
+    horizontalAnimation = Tween<double>(begin: 0, end: 370 / widget.boardSize)
         .animate(horizontalAnimationController)
           ..addListener(() {
             setState(() {});
           })
           ..addStatusListener((status) {
-            widget.statusListener(status);
-            if (status == AnimationStatus.completed) {
-              moving = true;
-            }
+            // widget.statusListener(status);
+            // if (status == AnimationStatus.completed) {
+            //   moving = true;
+            // }
           });
 
-    verticalAnimation = Tween<double>(
-            begin: 0, end: SizeConfig.blockSizeVertical * 51 / widget.boardSize)
+    verticalAnimation = Tween<double>(begin: 0, end: 355 / widget.boardSize)
         .animate(verticalAnimationController)
           ..addListener(() {
             setState(() {});
           })
           ..addStatusListener((status) {
-            widget.statusListener(status);
-            if (status == AnimationStatus.completed) {
-              moving = true;
-            }
+            // widget.statusListener(status);
+            // if (status == AnimationStatus.completed) {
+            //   moving = true;
+            // }
           });
   }
 
@@ -140,10 +136,8 @@ class _PuzzleTileState extends State<PuzzleTile> with TickerProviderStateMixin {
               offset: Offset(xOffset, yOffset),
               child: Container(
                 margin: EdgeInsets.symmetric(
-                  horizontal:
-                      SizeConfig.blockSizeHorizontal * 0.9 / widget.boardSize,
-                  vertical:
-                      SizeConfig.blockSizeVertical * 0.9 / widget.boardSize,
+                  horizontal: 3.725 / widget.boardSize,
+                  vertical: 6.165 / widget.boardSize,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,

@@ -52,6 +52,9 @@ class _PlayPageState extends State<PlayPage>
   }
 
   void solvePuzzle(BuildContext con) {
+    print(SizeConfig.blockSizeHorizontal);
+    print(SizeConfig.blockSizeVertical);
+
     solveMoves = Provider.of<PuzzleGame>(con, listen: false).solveTheProblem();
     if (solveMoves.isEmpty) return;
 
@@ -59,7 +62,7 @@ class _PlayPageState extends State<PlayPage>
     moveAuto(con, nextState);
     solveMoves.removeAt(0);
 
-    Timer.periodic(Duration(milliseconds: 200), (timer) {
+    Timer.periodic(Duration(milliseconds: 400), (timer) {
       print(solveMoves.length);
       if (solveMoves.isEmpty) {
         timer.cancel();
