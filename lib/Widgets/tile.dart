@@ -79,10 +79,10 @@ class _PuzzleTileState extends State<PuzzleTile> with TickerProviderStateMixin {
             setState(() {});
           })
           ..addStatusListener((status) {
-            // widget.statusListener(status);
-            // if (status == AnimationStatus.completed) {
-            //   moving = true;
-            // }
+            widget.statusListener(status);
+            if (status == AnimationStatus.completed) {
+              moving = true;
+            }
           });
 
     verticalAnimation = Tween<double>(begin: 0, end: 355 / widget.boardSize)
@@ -91,10 +91,10 @@ class _PuzzleTileState extends State<PuzzleTile> with TickerProviderStateMixin {
             setState(() {});
           })
           ..addStatusListener((status) {
-            // widget.statusListener(status);
-            // if (status == AnimationStatus.completed) {
-            //   moving = true;
-            // }
+            widget.statusListener(status);
+            if (status == AnimationStatus.completed) {
+              moving = true;
+            }
           });
   }
 

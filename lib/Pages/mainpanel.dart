@@ -34,8 +34,9 @@ class _MainPanelState extends State<MainPanel> {
 
     Widget title = Container(
       padding: EdgeInsets.only(
-          top: SizeConfig.blockSizeVertical * 2,
-          bottom: SizeConfig.blockSizeVertical * 5),
+        top: 14,
+        bottom: 25,
+      ),
       child: Text(
         "8 Puzzle",
         style: TextStyle(
@@ -58,7 +59,7 @@ class _MainPanelState extends State<MainPanel> {
 
     Widget sizeText = Container(
       padding: EdgeInsets.only(
-        top: SizeConfig.blockSizeVertical * 5,
+        top: 34,
       ),
       child: Text(
         "Please select the board size",
@@ -93,7 +94,7 @@ class _MainPanelState extends State<MainPanel> {
 
     Widget heuristicText = Container(
       padding: EdgeInsets.only(
-        top: SizeConfig.blockSizeVertical * 4,
+        top: 27,
       ),
       child: Text(
         "Choose the heuristic algorithm",
@@ -106,9 +107,7 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget heuristicFeild = Container(
-      margin: EdgeInsets.only(
-          top: SizeConfig.blockSizeVertical * 4,
-          right: SizeConfig.blockSizeHorizontal * 26.5),
+      margin: EdgeInsets.only(top: 27, right: 109),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: Color.fromRGBO(41, 41, 41, 1),
@@ -126,8 +125,9 @@ class _MainPanelState extends State<MainPanel> {
             },
             child: Container(
               margin: EdgeInsets.symmetric(
-                  vertical: SizeConfig.blockSizeVertical * 0.3,
-                  horizontal: SizeConfig.blockSizeHorizontal),
+                vertical: 2,
+                horizontal: 4,
+              ),
               padding: EdgeInsets.symmetric(
                   horizontal: SizeConfig.blockSizeHorizontal * 5,
                   vertical: SizeConfig.blockSizeVertical),
