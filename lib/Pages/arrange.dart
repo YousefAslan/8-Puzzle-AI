@@ -3,9 +3,7 @@ import 'package:ai_first_project/Modules/PuzzleBoard.dart';
 import 'package:ai_first_project/Modules/PuzzleGame.dart';
 import 'package:ai_first_project/Pages/playpage.dart';
 import 'package:ai_first_project/Widgets/board.dart';
-import 'package:ai_first_project/sizeconfig.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
@@ -30,6 +28,7 @@ class _ArrangePageState extends State<ArrangePage> {
   @override
   void initState() {
     super.initState();
+
     firstGoalBlocks = HashMap<Tuple2<int, int>, int>();
     for (int i = 0; i < widget.boardSize.item1 * widget.boardSize.item1; i++) {
       Tuple2<int, int> location = Tuple2<int, int>(
@@ -46,14 +45,12 @@ class _ArrangePageState extends State<ArrangePage> {
 
     firstGoalPB = PuzzleBoard.fromMap(
       blocks: firstGoalBlocks,
-      boardSize:
-          Tuple2<int, int>(widget.boardSize.item1, widget.boardSize.item2),
+      boardSize: widget.boardSize,
     );
 
     secondGoalPB = PuzzleBoard.fromMap(
       blocks: secondGoalBlocks,
-      boardSize:
-          Tuple2<int, int>(widget.boardSize.item1, widget.boardSize.item2),
+      boardSize: widget.boardSize,
     );
   }
 
@@ -61,8 +58,8 @@ class _ArrangePageState extends State<ArrangePage> {
   Widget build(BuildContext context) {
     Widget title = Container(
       padding: EdgeInsets.only(
-        top: SizeConfig.blockSizeVertical * 8,
-        left: SizeConfig.blockSizeHorizontal * 5,
+        top: 14,
+        left: 25,
       ),
       child: Text(
         "8 Puzzle",
@@ -75,12 +72,12 @@ class _ArrangePageState extends State<ArrangePage> {
 
     Widget subtitle = Container(
       padding: EdgeInsets.only(
-        top: SizeConfig.blockSizeVertical * 3,
-        left: SizeConfig.blockSizeHorizontal * 5,
-        bottom: SizeConfig.blockSizeVertical * 10,
+        top: 22,
+        left: 25,
+        bottom: 65,
       ),
       child: Text(
-        "Arrange the goal block",
+        "Arrange the goal blocks",
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -96,7 +93,7 @@ class _ArrangePageState extends State<ArrangePage> {
 
     Widget controlBar = Padding(
       padding: EdgeInsets.only(
-        top: SizeConfig.blockSizeVertical * 3,
+        top: 50,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -114,8 +111,7 @@ class _ArrangePageState extends State<ArrangePage> {
                 });
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: SizeConfig.blockSizeVertical * 1.2),
+                padding: EdgeInsets.symmetric(vertical: 13),
                 child: Text(
                   "Add another Goal",
                   style: TextStyle(
@@ -155,13 +151,14 @@ class _ArrangePageState extends State<ArrangePage> {
                       firstGoalPB.boardSize.item1));
 
               Provider.of<PuzzleGame>(context, listen: false).gameInitializer(
-                  secondGoal: secondGoal
-                      ? secondGoalPB.board
-                      : Map.from(firstGoalPB.board),
-                  heuristicType: widget.selectedAlgorithm,
-                  boardSize: Tuple2<int, int>(size, size),
-                  goalBlocks: firstGoalPB.board,
-                  initBlocks: gameBlocks);
+                secondGoal: secondGoal
+                    ? secondGoalPB.board
+                    : Map.from(firstGoalPB.board),
+                heuristicType: widget.selectedAlgorithm,
+                boardSize: widget.boardSize,
+                goalBlocks: firstGoalPB.board,
+                initBlocks: gameBlocks,
+              );
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -170,8 +167,7 @@ class _ArrangePageState extends State<ArrangePage> {
               );
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: SizeConfig.blockSizeVertical * 1.2),
+              padding: EdgeInsets.symmetric(vertical: 18),
               child: Text(
                 "Let's Play",
                 style: TextStyle(
@@ -187,15 +183,17 @@ class _ArrangePageState extends State<ArrangePage> {
     );
 
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          title,
-          subtitle,
-          board,
-          controlBar,
-        ],
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            title,
+            subtitle,
+            board,
+            controlBar,
+          ],
+        ),
       ),
     );
   }

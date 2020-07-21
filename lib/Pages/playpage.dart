@@ -1,12 +1,8 @@
 import 'dart:async';
-import 'dart:collection';
-
 import 'package:ai_first_project/Modules/PuzzleBoard.dart';
 import 'package:ai_first_project/Modules/PuzzleGame.dart';
 import 'package:ai_first_project/Widgets/board.dart';
-import 'package:ai_first_project/sizeconfig.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:tuple/tuple.dart';
@@ -40,6 +36,7 @@ class _PlayPageState extends State<PlayPage>
     _stopWatchTimer.onExecute.add(StopWatchExecute.start);
 
     solveMoves = List<PuzzleBoard>();
+
     _animationController = AnimationController(
       vsync: this,
     );
@@ -52,9 +49,6 @@ class _PlayPageState extends State<PlayPage>
   }
 
   void solvePuzzle(BuildContext con) {
-    print(SizeConfig.blockSizeHorizontal);
-    print(SizeConfig.blockSizeVertical);
-
     solveMoves = Provider.of<PuzzleGame>(con, listen: false).solveTheProblem();
     if (solveMoves.isEmpty) return;
 
@@ -77,6 +71,9 @@ class _PlayPageState extends State<PlayPage>
   void solvePuzzleAsync(BuildContext con) async {
     List<PuzzleBoard> moves =
         await Provider.of<PuzzleGame>(con, listen: false).solveProblemStatic();
+    setState(() {
+      solving = false;
+    });
     if (moves.isEmpty) return;
     PuzzleBoard nextState = moves[0];
     moveAuto(con, nextState);
@@ -85,19 +82,15 @@ class _PlayPageState extends State<PlayPage>
         moveAuto(con, p);
       });
     }
-    setState(() {
-      solving = false;
-    });
   }
 
   void hintAsync(BuildContext con) async {
     PuzzleBoard nextState =
-        await Provider.of<PuzzleGame>(context, listen: false).hintAsunc();
-    moveAuto(context, nextState);
-
+        await Provider.of<PuzzleGame>(con, listen: false).hintAsunc();
     setState(() {
       solving = false;
     });
+    moveAuto(con, nextState);
   }
 
   void hint(BuildContext con) {
@@ -136,11 +129,12 @@ class _PlayPageState extends State<PlayPage>
       initialData: 0,
       builder: (context, snap) {
         final value = snap.data;
-        final displayTime = StopWatchTimer.getDisplayTime(value);
+        final displayTime = StopWatchTimer.getDisplayTime(
+          value,
+        );
         return Padding(
           padding: EdgeInsets.only(
-            top: SizeConfig.blockSizeVertical * 5,
-            // horizontal: SizeConfig.blockSizeHorizontal * 7,
+            top: 30,
           ),
           child: Center(
             child: Text(
@@ -157,8 +151,8 @@ class _PlayPageState extends State<PlayPage>
 
     Widget progressBar = Container(
       padding: EdgeInsets.symmetric(
-        horizontal: SizeConfig.blockSizeHorizontal * 8,
-        vertical: SizeConfig.blockSizeHorizontal * 6,
+        horizontal: 25,
+        vertical: 25,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -169,10 +163,10 @@ class _PlayPageState extends State<PlayPage>
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            width: SizeConfig.blockSizeHorizontal * 10,
-            height: SizeConfig.blockSizeHorizontal * 10,
+            width: 50,
+            height: 50,
             margin: EdgeInsets.only(
-              right: SizeConfig.blockSizeHorizontal * 3,
+              right: 15,
             ),
             decoration: BoxDecoration(
               color: Color.fromRGBO(253, 238, 187, 1),
@@ -183,8 +177,9 @@ class _PlayPageState extends State<PlayPage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding:
-                    EdgeInsets.only(bottom: SizeConfig.blockSizeVertical * 1.5),
+                padding: EdgeInsets.only(
+                  bottom: 10,
+                ),
                 child: Text(
                   "Progress",
                   style: TextStyle(
@@ -194,8 +189,8 @@ class _PlayPageState extends State<PlayPage>
                 ),
               ),
               SizedBox(
-                width: SizeConfig.blockSizeHorizontal * 65,
-                height: SizeConfig.blockSizeVertical * 2,
+                width: 270,
+                height: 14,
                 child: LinearProgressIndicator(
                   backgroundColor: Colors.grey[200],
                   value: Provider.of<PuzzleGame>(context).progress1,
@@ -208,120 +203,111 @@ class _PlayPageState extends State<PlayPage>
       ),
     );
 
-    Widget controlBar = Container(
-      margin: EdgeInsets.only(top: SizeConfig.blockSizeVertical),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.only(
-              left: SizeConfig.blockSizeHorizontal * 5,
-            ),
-            width: SizeConfig.blockSizeHorizontal * 12,
-            height: SizeConfig.blockSizeHorizontal * 12,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Color.fromRGBO(21, 146, 230, 1)),
-            child: IconButton(
-                icon: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 32,
-                ),
-                onPressed: () {
-                  setState(() {
-                    solving = true;
-                  });
-                  // solvePuzzleAsync(context);
-                  solvePuzzle(context);
-                }),
+    Widget controlBar = Row(
+      children: [
+        Container(
+          margin: EdgeInsets.only(
+            left: 20,
           ),
-          Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: SizeConfig.blockSizeHorizontal * 5),
-            width: SizeConfig.blockSizeHorizontal * 12,
-            height: SizeConfig.blockSizeHorizontal * 12,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Color.fromRGBO(21, 146, 230, 1)),
-            child: IconButton(
-                icon: Icon(
-                  Icons.lightbulb_outline,
-                  color: Colors.white,
-                  size: 32,
-                ),
-                onPressed: () {
-                  setState(() {
-                    solving = true;
-                  });
-                  // hintAsync(context);
-                  hint(context);
-                }),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              right: SizeConfig.blockSizeHorizontal * 7,
-            ),
-            width: SizeConfig.blockSizeHorizontal * 12,
-            height: SizeConfig.blockSizeHorizontal * 12,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Color.fromRGBO(21, 146, 230, 1)),
-            child: IconButton(
-                icon: Icon(
-                  timerRunning ? Icons.pause : Icons.play_arrow,
-                  color: Colors.white,
-                  size: 32,
-                ),
-                onPressed: () {
-                  if (timerRunning)
-                    setState(() {
-                      _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
-                      timerRunning = false;
-                    });
-                  else
-                    setState(() {
-                      _stopWatchTimer.onExecute.add(StopWatchExecute.start);
-                      timerRunning = true;
-                    });
-                }),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 6),
-            child: RaisedButton(
-              color: Color.fromRGBO(21, 146, 230, 1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
+          width: 55,
+          height: 55,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: Color.fromRGBO(21, 146, 230, 1)),
+          child: IconButton(
+              icon: Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 40,
               ),
               onPressed: () {
-                Provider.of<PuzzleGame>(context, listen: false).resetGame();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: SizeConfig.blockSizeHorizontal * 2,
-                    vertical: SizeConfig.blockSizeVertical * 2),
-                child: Text(
-                  "Go Back",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                setState(() {
+                  solving = true;
+                });
+                solvePuzzleAsync(context);
+              }),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          width: 55,
+          height: 55,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: Color.fromRGBO(21, 146, 230, 1)),
+          child: IconButton(
+              icon: Icon(
+                Icons.lightbulb_outline,
+                color: Colors.white,
+                size: 40,
+              ),
+              onPressed: () {
+                setState(() {
+                  solving = true;
+                });
+                hintAsync(context);
+              }),
+        ),
+        Container(
+          margin: EdgeInsets.only(
+            right: 35,
+          ),
+          width: 55,
+          height: 55,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: Color.fromRGBO(21, 146, 230, 1)),
+          child: IconButton(
+              icon: Icon(
+                timerRunning ? Icons.pause : Icons.play_arrow,
+                color: Colors.white,
+                size: 40,
+              ),
+              onPressed: () {
+                if (timerRunning)
+                  setState(() {
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                    timerRunning = false;
+                  });
+                else
+                  setState(() {
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+                    timerRunning = true;
+                  });
+              }),
+        ),
+        RaisedButton(
+          color: Color.fromRGBO(21, 146, 230, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+          ),
+          onPressed: () {
+            Provider.of<PuzzleGame>(context, listen: false).resetGame();
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 18),
+            child: Text(
+              "Go Back",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
 
     Widget solvingText = Opacity(
       opacity: solving ? 1 : 0,
       child: Padding(
         padding: EdgeInsets.only(
-            top: SizeConfig.blockSizeVertical * 5,
-            right: SizeConfig.blockSizeHorizontal * 70),
+          top: 18,
+          right: 290,
+          bottom: 13,
+        ),
         child: Text(
           "Solving...",
           style: TextStyle(

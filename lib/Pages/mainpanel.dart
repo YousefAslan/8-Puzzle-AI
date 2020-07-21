@@ -1,15 +1,8 @@
-import 'dart:collection';
-
-import 'package:ai_first_project/Modules/PuzzleBoard.dart';
 import 'package:ai_first_project/Modules/PuzzleGame.dart';
 import 'package:ai_first_project/Pages/arrange.dart';
-import 'package:ai_first_project/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
-
-import '../sizeconfig.dart';
 
 class MainPanel extends StatefulWidget {
   @override
@@ -17,21 +10,16 @@ class MainPanel extends StatefulWidget {
 }
 
 class _MainPanelState extends State<MainPanel> {
-  TextEditingController sizeController;
-
   List<HeuristicType> selectedAlgorithm = [HeuristicType.tilesDifferences];
-  int size = 3;
+  int size;
   @override
   void initState() {
     super.initState();
-    sizeController = TextEditingController();
+    size = 3;
   }
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig sizeConfig = SizeConfig();
-    sizeConfig.init(context);
-
     Widget title = Container(
       padding: EdgeInsets.only(
         top: 14,
@@ -75,20 +63,29 @@ class _MainPanelState extends State<MainPanel> {
         primaryColor: Colors.white,
         primaryColorDark: Colors.red,
       ),
-      child: TextField(
-        onChanged: (value) {
-          int newSize = int.parse(value);
-          if (newSize > 0) {
-            size = newSize;
-          }
-        },
-        controller: sizeController,
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.white, fontSize: 20),
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[
-          WhitelistingTextInputFormatter.digitsOnly
-        ],
+      child: Container(
+        margin: EdgeInsets.only(right: 150, top: 15),
+        child: TextField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(40),
+            ),
+            fillColor: Colors.white,
+            filled: true,
+          ),
+          onChanged: (value) {
+            int newSize = int.parse(value);
+            if (newSize > 0) {
+              size = newSize;
+            }
+          },
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20),
+          keyboardType: TextInputType.number,
+          inputFormatters: <TextInputFormatter>[
+            WhitelistingTextInputFormatter.digitsOnly
+          ],
+        ),
       ),
     );
 
@@ -107,7 +104,7 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget heuristicFeild = Container(
-      margin: EdgeInsets.only(top: 27, right: 109),
+      margin: EdgeInsets.only(top: 27, right: 112),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: Color.fromRGBO(41, 41, 41, 1),
@@ -129,8 +126,9 @@ class _MainPanelState extends State<MainPanel> {
                 horizontal: 4,
               ),
               padding: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.blockSizeHorizontal * 5,
-                  vertical: SizeConfig.blockSizeVertical),
+                horizontal: 20,
+                vertical: 10,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 color:
@@ -159,11 +157,13 @@ class _MainPanelState extends State<MainPanel> {
             },
             child: Container(
               margin: EdgeInsets.symmetric(
-                  vertical: SizeConfig.blockSizeVertical * 0.3,
-                  horizontal: SizeConfig.blockSizeHorizontal),
+                vertical: 2,
+                horizontal: 4,
+              ),
               padding: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.blockSizeHorizontal * 6,
-                  vertical: SizeConfig.blockSizeVertical),
+                horizontal: 25,
+                vertical: 10,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 color:
@@ -186,9 +186,7 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget playButton = Padding(
-      padding: EdgeInsets.only(
-          top: SizeConfig.blockSizeVertical * 10,
-          left: SizeConfig.blockSizeHorizontal * 25),
+      padding: EdgeInsets.only(top: 65, left: 103),
       child: RaisedButton(
         color: Color.fromRGBO(21, 146, 230, 1),
         shape: RoundedRectangleBorder(
@@ -208,8 +206,9 @@ class _MainPanelState extends State<MainPanel> {
         },
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal * 10,
-              vertical: SizeConfig.blockSizeVertical * 1.2),
+            horizontal: 40,
+            vertical: 18,
+          ),
           child: Text(
             "Arrange goal",
             style: TextStyle(
@@ -225,12 +224,12 @@ class _MainPanelState extends State<MainPanel> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal * 4),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           margin: EdgeInsets.only(
-              top: SizeConfig.blockSizeVertical * 4.5,
-              bottom: SizeConfig.blockSizeVertical * 4.5,
-              right: SizeConfig.blockSizeHorizontal * 10),
+            top: 30,
+            bottom: 30,
+            right: 40,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(20),
