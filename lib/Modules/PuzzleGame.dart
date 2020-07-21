@@ -38,8 +38,11 @@ class PuzzleGame extends ChangeNotifier {
         PuzzleBoard.fromMap(boardSize: boardSize, blocks: initBlocks);
     this.theGoalBoard =
         PuzzleBoard.fromMap(boardSize: boardSize, blocks: goalBlocks);
-    this.secondGoal =
-        PuzzleBoard.fromMap(boardSize: boardSize, blocks: secondGoal);
+    secondGoal == null
+        ? this.secondGoal = this.theGoalBoard
+        : this.secondGoal =
+            PuzzleBoard.fromMap(boardSize: boardSize, blocks: secondGoal);
+
     maxDifference = pow(boardSize.item1, 2) - 1;
 
     maxDistance = pow(boardSize.item1, 2);
@@ -98,7 +101,6 @@ class PuzzleGame extends ChangeNotifier {
   int get progress1 => maxDistance - computeHeuristic1(gameBoard);
 
   int get progress2 => maxDifference - computeHeuristic2(gameBoard);
-
 
   int computeHeuristic3(PuzzleBoard puzzleBoard) {
     //TODO: not implemented yet
