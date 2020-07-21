@@ -53,6 +53,7 @@ class _PlayPageState extends State<PlayPage>
   }
 
   void solvePuzzle(BuildContext con) async {
+    solveMoves = Provider.of<PuzzleGame>(con, listen: false).solveTheProblem();
     if (solveMoves.isEmpty) return;
     PuzzleBoard nextState = solveMoves[0];
     moveAuto(con, nextState);
@@ -83,6 +84,16 @@ class _PlayPageState extends State<PlayPage>
   void hintAsync(BuildContext con) async {
     PuzzleBoard nextState =
         await Provider.of<PuzzleGame>(context, listen: false).hintAsunc();
+    moveAuto(context, nextState);
+
+    setState(() {
+      solving = false;
+    });
+  }
+
+  void hint(BuildContext con) {
+    PuzzleBoard nextState =
+        Provider.of<PuzzleGame>(context, listen: false).hint();
     moveAuto(context, nextState);
 
     setState(() {
@@ -211,7 +222,8 @@ class _PlayPageState extends State<PlayPage>
                   setState(() {
                     solving = true;
                   });
-                  solvePuzzleAsync(context);
+                  // solvePuzzleAsync(context);
+                  solvePuzzle(context);
                 }),
           ),
           Container(
@@ -232,7 +244,8 @@ class _PlayPageState extends State<PlayPage>
                   setState(() {
                     solving = true;
                   });
-                  hintAsync(context);
+                  // hintAsync(context);
+                  hint(context);
                 }),
           ),
           Container(
