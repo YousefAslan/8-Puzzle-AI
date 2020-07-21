@@ -5,7 +5,7 @@ The 8 Puzzle game was built with **Flutter** to suit both mobile phones and the 
 ## User Interface
 Landing Page  | Home Page
 ------------- | -------------
-![Landing page](https://lh3.google.com/u/0/d/1tdDgqG-aLY77uJ9Z-Ym3g1T5NayMl0Md=w1920-h913-iv1) | ![Home page](https://lh4.googleusercontent.com/gMrLJZrabVh4jRAFAZOozGHX1lp5EMSAG94i7-vBUeofm4cpMZOFKu7-Li573wXwtgsoaZROzNRVL7FvUSDA=w1920-h913-rw)| 
+![Landing page](https://github.com/YousefAslan/8-Puzzle-AI/blob/master/landing%20page.png) | ![Home page](https://github.com/YousefAslan/8-Puzzle-AI/blob/master/home%20page.png)| 
 
 ## Program Properties
 
