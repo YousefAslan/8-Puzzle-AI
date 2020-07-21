@@ -59,7 +59,7 @@ class _PlayPageState extends State<PlayPage>
     moveAuto(con, nextState);
     solveMoves.removeAt(0);
 
-    Timer.periodic(Duration(milliseconds: 500), (timer) {
+    Timer.periodic(Duration(milliseconds: 200), (timer) {
       print(solveMoves.length);
       if (solveMoves.isEmpty) {
         timer.cancel();
