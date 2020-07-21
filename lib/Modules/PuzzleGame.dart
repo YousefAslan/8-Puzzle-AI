@@ -1,10 +1,10 @@
 import 'dart:collection';
 import 'dart:math';
-import 'package:ai_first_project/Modules/modified-heap-priorityQueue.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tuple/tuple.dart';
 import 'PuzzleBoard.dart';
+import 'modified-heap-priorityQueue.dart';
 
 enum HeuristicType {
   tilesDifferences,
@@ -143,10 +143,10 @@ class PuzzleGame extends ChangeNotifier {
   }
 
   double get progress1 =>
-      (maxDistance - computeHeuristic1(gameBoard)) / maxDistance;
+      (maxDistance - computeHeuristic2(gameBoard)) / maxDistance;
 
   double get progress2 =>
-      (maxDifference - computeHeuristic2(gameBoard)) / maxDifference;
+      (maxDifference - computeHeuristic1(gameBoard)) / maxDifference;
 
   int computeHeuristic3(PuzzleBoard puzzleBoard) {
     //TODO: not implemented yet

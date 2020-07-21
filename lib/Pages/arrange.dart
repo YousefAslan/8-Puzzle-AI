@@ -103,7 +103,7 @@ class _ArrangePageState extends State<ArrangePage> {
             child: RaisedButton(
               color: Colors.grey,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
+                borderRadius: BorderRadius.circular(50),
               ),
               onPressed: () {
                 setState(() {
@@ -111,7 +111,7 @@ class _ArrangePageState extends State<ArrangePage> {
                 });
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 13),
+                padding: EdgeInsets.symmetric(vertical: 20),
                 child: Text(
                   "Add another Goal",
                   style: TextStyle(
@@ -126,7 +126,7 @@ class _ArrangePageState extends State<ArrangePage> {
           RaisedButton(
             color: Color.fromRGBO(21, 146, 230, 1),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
+              borderRadius: BorderRadius.circular(50),
             ),
             onPressed: () {
               HashMap<Tuple2<int, int>, int> gameBlocks =
@@ -167,7 +167,7 @@ class _ArrangePageState extends State<ArrangePage> {
               );
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 18),
+              padding: EdgeInsets.symmetric(vertical: 20),
               child: Text(
                 "Let's Play",
                 style: TextStyle(

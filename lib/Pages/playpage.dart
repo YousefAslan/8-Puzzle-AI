@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:ai_first_project/Modules/PuzzleBoard.dart';
 import 'package:ai_first_project/Modules/PuzzleGame.dart';
 import 'package:ai_first_project/Widgets/board.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -150,9 +151,14 @@ class _PlayPageState extends State<PlayPage>
     );
 
     Widget progressBar = Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 25,
+
+      margin: EdgeInsets.symmetric(
+        horizontal: 15,
         vertical: 25,
+      ),
+
+      padding: EdgeInsets.symmetric(
+        vertical: 15,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -204,13 +210,14 @@ class _PlayPageState extends State<PlayPage>
     );
 
     Widget controlBar = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          margin: EdgeInsets.only(
-            left: 20,
-          ),
-          width: 55,
-          height: 55,
+//          margin: EdgeInsets.only(
+//            left: 20,
+//          ),
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               color: Color.fromRGBO(21, 146, 230, 1)),
@@ -229,8 +236,8 @@ class _PlayPageState extends State<PlayPage>
         ),
         Container(
           margin: EdgeInsets.symmetric(horizontal: 20),
-          width: 55,
-          height: 55,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               color: Color.fromRGBO(21, 146, 230, 1)),
@@ -251,8 +258,8 @@ class _PlayPageState extends State<PlayPage>
           margin: EdgeInsets.only(
             right: 35,
           ),
-          width: 55,
-          height: 55,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               color: Color.fromRGBO(21, 146, 230, 1)),
@@ -278,7 +285,7 @@ class _PlayPageState extends State<PlayPage>
         RaisedButton(
           color: Color.fromRGBO(21, 146, 230, 1),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
+            borderRadius: BorderRadius.circular(50),
           ),
           onPressed: () {
             Provider.of<PuzzleGame>(context, listen: false).resetGame();
@@ -286,7 +293,7 @@ class _PlayPageState extends State<PlayPage>
             Navigator.of(context).pop();
           },
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 18),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             child: Text(
               "Go Back",
               style: TextStyle(

@@ -30,7 +30,7 @@ class _MainPanelState extends State<MainPanel> {
         style: TextStyle(
           color: Colors.white,
           fontSize: 35,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w900,
         ),
       ),
     );
@@ -40,7 +40,7 @@ class _MainPanelState extends State<MainPanel> {
       softWrap: true,
       style: TextStyle(
           fontSize: 20,
-          height: 1.5,
+          height: 1.2,
           color: Colors.white,
           fontWeight: FontWeight.bold),
     );
@@ -104,7 +104,7 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget heuristicFeild = Container(
-      margin: EdgeInsets.only(top: 27, right: 112),
+      margin: EdgeInsets.only(top: 27, right: 100),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: Color.fromRGBO(41, 41, 41, 1),
@@ -186,11 +186,11 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget playButton = Padding(
-      padding: EdgeInsets.only(top: 65, left: 103),
+      padding: EdgeInsets.only(top: 65, left: 90),
       child: RaisedButton(
         color: Color.fromRGBO(21, 146, 230, 1),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18.0),
+          borderRadius: BorderRadius.circular(50),
         ),
         onPressed: () {
           Tuple2<int, int> boardSize = Tuple2<int, int>(size, size);
@@ -207,7 +207,7 @@ class _MainPanelState extends State<MainPanel> {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: 40,
-            vertical: 18,
+            vertical: 20,
           ),
           child: Text(
             "Arrange goal",
