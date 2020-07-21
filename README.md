@@ -1,6 +1,6 @@
-# puzzleastar
+# ai_first_project
 
-A new Flutter application.
+A new Flutter project.
 
 ## Getting Started
 

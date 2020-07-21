@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:tuple/tuple.dart';
 import 'package:quiver/core.dart';
 
-enum MovingDirection { UP, RIGHT, LEFT, DOWN }
+enum MovingDirection { UP, RIGHT, LEFT, DOWN, NONE }
 
 class PuzzleBoard {
   static int emptyBlock = 0;
@@ -155,9 +155,8 @@ class QueueEntityBoard implements Comparable {
 //  Queue<PuzzleBoard> recommendedSteps;
   List<PuzzleBoard> recommendedSteps1;
 
-
   QueueEntityBoard(
-      {this.currentBoard, this.cost, this.heuristic,this.recommendedSteps1});
+      {this.currentBoard, this.cost, this.heuristic, this.recommendedSteps1});
 //      {this.currentBoard, this.cost, this.heuristic, this.recommendedSteps,this.recommendedSteps1});
 
   int total() => cost + heuristic;
