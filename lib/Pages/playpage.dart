@@ -40,7 +40,6 @@ class _PlayPageState extends State<PlayPage>
     _stopWatchTimer.onExecute.add(StopWatchExecute.start);
 
     solveMoves = List<PuzzleBoard>();
-
     _animationController = AnimationController(
       vsync: this,
     );
@@ -52,17 +51,24 @@ class _PlayPageState extends State<PlayPage>
     );
   }
 
-  void solvePuzzle(BuildContext con) async {
+  void solvePuzzle(BuildContext con) {
     solveMoves = Provider.of<PuzzleGame>(con, listen: false).solveTheProblem();
     if (solveMoves.isEmpty) return;
+
     PuzzleBoard nextState = solveMoves[0];
     moveAuto(con, nextState);
-    for (PuzzleBoard p in solveMoves) {
-      await Future.delayed(Duration(milliseconds: 200), () {
-        moveAuto(con, p);
-      });
-    }
-    solveMoves.clear();
+    solveMoves.removeAt(0);
+
+    Timer.periodic(Duration(milliseconds: 500), (timer) {
+      print(solveMoves.length);
+      if (solveMoves.isEmpty) {
+        timer.cancel();
+        return;
+      }
+      PuzzleBoard nextState = solveMoves[0];
+      moveAuto(con, nextState);
+      solveMoves.removeAt(0);
+    });
   }
 
   void solvePuzzleAsync(BuildContext con) async {

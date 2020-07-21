@@ -201,7 +201,7 @@ class _MainPanelState extends State<MainPanel> {
             MaterialPageRoute(
               builder: (context) => ArrangePage(
                 boardSize: boardSize,
-                selectedAlgorithm: selectedAlgorithm[0],
+                selectedAlgorithm: HeuristicType.manhattanDistance,
               ),
             ),
           );
