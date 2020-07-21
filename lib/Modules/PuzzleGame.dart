@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:puzzleastar/Modules/modified-heap-priorityQueue.dart';
 import 'package:tuple/tuple.dart';
@@ -11,26 +12,27 @@ enum HeuristicType {
 }
 
 class PuzzleGame extends ChangeNotifier {
-  bool _initializeBoard, _win;
+  bool _win;
   Tuple2<int, int> boardSize;
   PuzzleBoard gameBoard, theGoalBoard, secondGoal;
   HeuristicType heuristicType;
+  int maxDifference = 0;
+  int maxDistance = 0;
 
   PuzzleGame() {
-    _initializeBoard = false;
     _win = false;
   }
 
   get win => _win;
 
-  bool gameInitializer({Map<Tuple2<int, int>, int> initBlocks,
-    Map<Tuple2<int, int>, int> goalBlocks,
-    Map<Tuple2<int, int>, int> secondGoal,
-    Tuple2<int, int> boardSize,
-    HeuristicType heuristicType}) {
-    if (_initializeBoard) return false;
+  bool gameInitializer(
+      {Map<Tuple2<int, int>, int> initBlocks,
+      Map<Tuple2<int, int>, int> goalBlocks,
+      Map<Tuple2<int, int>, int> secondGoal,
+      Tuple2<int, int> boardSize,
+      HeuristicType heuristicType}) {
+    _win = false;
     this.heuristicType = heuristicType;
-    this._initializeBoard = true;
     this.boardSize = boardSize;
     this.gameBoard =
         PuzzleBoard.fromMap(boardSize: boardSize, blocks: initBlocks);
@@ -38,13 +40,19 @@ class PuzzleGame extends ChangeNotifier {
         PuzzleBoard.fromMap(boardSize: boardSize, blocks: goalBlocks);
     this.secondGoal =
         PuzzleBoard.fromMap(boardSize: boardSize, blocks: secondGoal);
+    maxDifference = pow(boardSize.item1, 2) - 1;
+
+    maxDistance = pow(boardSize.item1, 2);
+    if (maxDistance.isOdd) maxDistance--;
+    maxDistance -= ((boardSize.item1 - 1) * 2);
+
     notifyListeners();
     return true;
   }
 
   bool moveBlock(MovingDirection direction) {
     gameBoard.moveBlock(direction);
-    if (gameBoard == theGoalBoard) _win = true;
+    if (gameBoard == theGoalBoard || gameBoard == secondGoal) _win = true;
     notifyListeners();
     return true;
   }
@@ -74,7 +82,7 @@ class PuzzleGame extends ChangeNotifier {
     puzzleBoard.board.forEach((key, value) {
       if (value != 0) {
         Tuple2<int, int> tempLocation =
-        keys.firstWhere((e) => temp[e] == value, orElse: () => null);
+            keys.firstWhere((e) => temp[e] == value, orElse: () => null);
         toReturn += (tempLocation.item1 - key.item1).abs() +
             (tempLocation.item2 - key.item2).abs();
 
@@ -86,6 +94,11 @@ class PuzzleGame extends ChangeNotifier {
     });
     return toReturn < toReturn2 ? toReturn : toReturn2;
   }
+
+  int get progress1 => maxDistance - computeHeuristic1(gameBoard);
+
+  int get progress2 => maxDifference - computeHeuristic2(gameBoard);
+
 
   int computeHeuristic3(PuzzleBoard puzzleBoard) {
     //TODO: not implemented yet
@@ -125,11 +138,10 @@ class PuzzleGame extends ChangeNotifier {
 //  Queue<PuzzleBoard> aStarAlgorithm() {
   List<PuzzleBoard> aStarAlgorithm() {
     ModifiedHeapPriorityQueue<QueueEntityBoard> open =
-    ModifiedHeapPriorityQueue(isEqual, compare);
+        ModifiedHeapPriorityQueue(isEqual, compare);
     HashMap<PuzzleBoard, int> closeList = HashMap();
 
-    int cost = 0,
-        heuristic = computeHeuristic(gameBoard);
+    int cost = 0, heuristic = computeHeuristic(gameBoard);
 //    Queue<PuzzleBoard> steps = Queue<PuzzleBoard>();
     List<PuzzleBoard> steps2 = [];
     QueueEntityBoard best = QueueEntityBoard(
@@ -156,8 +168,8 @@ class PuzzleGame extends ChangeNotifier {
       cost = best.cost + 1;
       children = best.currentBoard.getAvailableMoves();
       for (PuzzleBoard child in children) {
-        if(best.recommendedSteps1.length !=0 && child == best.recommendedSteps1.last)
-          continue;
+        if (best.recommendedSteps1.length != 0 &&
+            child == best.recommendedSteps1.last) continue;
         heuristic = computeHeuristic(child);
         steps2 = []
           ..addAll(best.recommendedSteps1)
@@ -197,5 +209,28 @@ class PuzzleGame extends ChangeNotifier {
   List<PuzzleBoard> solveTheProblem() {
     List solution = aStarAlgorithm();
     return solution;
+  }
+
+  PuzzleBoard bFS() {
+    Queue<PuzzleBoard> open = Queue<PuzzleBoard>();
+    HashMap<PuzzleBoard, int> visited = HashMap<PuzzleBoard, int>();
+
+    open.add(gameBoard);
+    PuzzleBoard temp;
+    List<PuzzleBoard> children;
+
+    int i = 0;
+    while (open.isNotEmpty) {
+      print(i++);
+      temp = open.removeFirst();
+      visited[temp] = 0;
+
+      if (temp == theGoalBoard) return temp;
+      children = temp.getAvailableMoves();
+      children.forEach((element) {
+        if (!visited.containsKey(element)) open.add(element);
+      });
+    }
+    return null;
   }
 }

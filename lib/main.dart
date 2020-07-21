@@ -162,6 +162,32 @@ class _TestingState extends State<Testing> {
                             );
                           },
                         );
+                      }),RaisedButton(
+                      child: Text("BFS"),
+                      onPressed: () {
+                        var t = DateTime.now();
+                        var temp= game.bFS();
+                        print((DateTime.now().difference(t)).toString());
+                        showDialog<void>(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text((DateTime.now().difference(t)).toString()),
+                              content: SingleChildScrollView(
+                                  child: Text(temp.toString())
+                              ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text('Approve'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       }),
                   RaisedButton(
                       child: Text("solve"),
