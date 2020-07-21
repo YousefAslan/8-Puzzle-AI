@@ -87,6 +87,8 @@ class PuzzleBoard {
       case MovingDirection.RIGHT:
         newLocation = oldLocation.withItem2(oldLocation.item2 + 1);
         break;
+      case MovingDirection.NONE:
+        break;
     }
     if (newLocation.item1 >= 0 &&
         newLocation.item2 >= 0 &&
