@@ -10,7 +10,7 @@ class MainPanel extends StatefulWidget {
 }
 
 class _MainPanelState extends State<MainPanel> {
-  List<HeuristicType> selectedAlgorithm = [HeuristicType.tilesDifferences];
+  List<HeuristicType> selectedAlgorithms = [HeuristicType.manhattanDistance];
   int size;
 
   @override
@@ -29,11 +29,10 @@ class _MainPanelState extends State<MainPanel> {
       child: Text(
         "8 Puzzle",
         style: TextStyle(
-          color: Colors.white,
-          fontSize: 35,
-          fontWeight: FontWeight.w600,
-            fontFamily: 'relway-semibold'
-        ),
+            color: Colors.white,
+            fontSize: 35,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'relway-semibold'),
       ),
     );
 
@@ -89,9 +88,6 @@ class _MainPanelState extends State<MainPanel> {
     );
 
     Widget heuristicText = Container(
-//      padding: EdgeInsets.only(
-//        top: 27,
-//      ),
       child: Text(
         "Choose the heuristic algorithm",
         style: TextStyle(
@@ -116,26 +112,26 @@ class _MainPanelState extends State<MainPanel> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  if (selectedAlgorithm
+                  if (selectedAlgorithms
                       .contains(HeuristicType.tilesDifferences))
-                    selectedAlgorithm.remove(HeuristicType.tilesDifferences);
+                    selectedAlgorithms.remove(HeuristicType.tilesDifferences);
                   else
-                    selectedAlgorithm.add(HeuristicType.tilesDifferences);
+                    selectedAlgorithms.add(HeuristicType.tilesDifferences);
                 });
               },
               child: Container(
                 height: 70,
-                alignment:Alignment.center ,
+                alignment: Alignment.center,
                 margin: EdgeInsets.symmetric(
                   vertical: 3,
                   horizontal: 3,
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color:
-                      selectedAlgorithm.contains(HeuristicType.tilesDifferences)
-                          ? Color.fromRGBO(255, 170, 0, 1)
-                          : Color.fromRGBO(41, 41, 41, 1),
+                  color: selectedAlgorithms
+                          .contains(HeuristicType.tilesDifferences)
+                      ? Color.fromRGBO(255, 170, 0, 1)
+                      : Color.fromRGBO(41, 41, 41, 1),
                 ),
                 child: Text(
                   "Tiles\nDifference",
@@ -153,11 +149,11 @@ class _MainPanelState extends State<MainPanel> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  if (selectedAlgorithm
+                  if (selectedAlgorithms
                       .contains(HeuristicType.manhattanDistance))
-                    selectedAlgorithm.remove(HeuristicType.manhattanDistance);
+                    selectedAlgorithms.remove(HeuristicType.manhattanDistance);
                   else
-                    selectedAlgorithm.add(HeuristicType.manhattanDistance);
+                    selectedAlgorithms.add(HeuristicType.manhattanDistance);
                 });
               },
               child: Container(
@@ -169,7 +165,7 @@ class _MainPanelState extends State<MainPanel> {
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: selectedAlgorithm
+                  color: selectedAlgorithms
                           .contains(HeuristicType.manhattanDistance)
                       ? Color.fromRGBO(255, 170, 0, 1)
                       : Color.fromRGBO(41, 41, 41, 1),
@@ -204,7 +200,7 @@ class _MainPanelState extends State<MainPanel> {
             MaterialPageRoute(
               builder: (context) => ArrangePage(
                 boardSize: boardSize,
-                selectedAlgorithm: HeuristicType.manhattanDistance,
+                selectedAlgorithms: selectedAlgorithms,
               ),
             ),
           );

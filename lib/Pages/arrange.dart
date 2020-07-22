@@ -9,8 +9,8 @@ import 'package:tuple/tuple.dart';
 
 class ArrangePage extends StatefulWidget {
   final Tuple2<int, int> boardSize;
-  final HeuristicType selectedAlgorithm;
-  const ArrangePage({Key key, this.boardSize, this.selectedAlgorithm})
+  final List<HeuristicType> selectedAlgorithms;
+  const ArrangePage({Key key, this.boardSize, this.selectedAlgorithms})
       : super(key: key);
 
   @override
@@ -28,7 +28,6 @@ class _ArrangePageState extends State<ArrangePage> {
   @override
   void initState() {
     super.initState();
-
     firstGoalBlocks = HashMap<Tuple2<int, int>, int>();
     for (int i = 0; i < widget.boardSize.item1 * widget.boardSize.item1; i++) {
       Tuple2<int, int> location = Tuple2<int, int>(
@@ -64,10 +63,9 @@ class _ArrangePageState extends State<ArrangePage> {
       child: Text(
         "8 Puzzle",
         style: TextStyle(
-          fontSize: 35,
+            fontSize: 35,
             fontWeight: FontWeight.w600,
-            fontFamily: 'relway-semibold'
-        ),
+            fontFamily: 'relway-semibold'),
       ),
     );
 
@@ -151,11 +149,18 @@ class _ArrangePageState extends State<ArrangePage> {
                   !PuzzleGame.isSolvable(gameBlocks, secondGoalBlocks,
                       firstGoalPB.boardSize.item1));
 
+              bool manhattanSelected = widget.selectedAlgorithms
+                  .contains(HeuristicType.manhattanDistance);
+              bool differenceSelected = widget.selectedAlgorithms
+                  .contains(HeuristicType.tilesDifferences);
+
               Provider.of<PuzzleGame>(context, listen: false).gameInitializer(
                 secondGoal: secondGoal
                     ? secondGoalPB.board
                     : Map.from(firstGoalPB.board),
-                heuristicType: widget.selectedAlgorithm,
+                // heuristicType: widget.selectedAlgorithm,
+                manhattanDistanceIsSelected: manhattanSelected,
+                tilesDifferenceIsSelected: differenceSelected,
                 boardSize: widget.boardSize,
                 goalBlocks: firstGoalPB.board,
                 initBlocks: gameBlocks,
