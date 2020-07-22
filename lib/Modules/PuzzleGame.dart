@@ -55,7 +55,9 @@ class PuzzleGame extends ChangeNotifier {
 
     maxDistance = pow(boardSize.item1, 2);
     if (maxDistance.isOdd) maxDistance--;
+    maxDistance *= boardSize.item1;
     maxDistance -= ((boardSize.item1 - 1) * 2);
+
     this.tilesDifferenceIsSelected = tilesDifferenceIsSelected;
     this.manhattanDistanceIsSelected = manhattanDistanceIsSelected;
     notifyListeners();
