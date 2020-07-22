@@ -26,9 +26,9 @@ The game provides hints and solving the game using the **A*** **algorithm**, als
 `$ flutter run`
 ## Web application
 ```
-flutter upgrade
-flutter config --enable-web
+$ flutter upgrade
+$ flutter config --enable-web
 
 # run the project
-flutter run -d chrome
+$ flutter run -d chrome
 ```
