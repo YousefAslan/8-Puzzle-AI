@@ -19,12 +19,14 @@ class PuzzleGame extends ChangeNotifier {
   HeuristicType heuristicType;
   int maxDifference = 0;
   int maxDistance = 0;
+  bool tilesDifferenceIsSelected, manhattanDistanceIsSelected;
 
   PuzzleGame() {
     _win = false;
   }
 
   get win => _win;
+
   void resetGame() {
     _win = false;
   }
@@ -34,7 +36,9 @@ class PuzzleGame extends ChangeNotifier {
       Map<Tuple2<int, int>, int> goalBlocks,
       Map<Tuple2<int, int>, int> secondGoal,
       Tuple2<int, int> boardSize,
-      HeuristicType heuristicType}) {
+      HeuristicType heuristicType,
+      bool tilesDifferenceIsSelected,
+      bool manhattanDistanceIsSelected}) {
     _win = false;
     this.heuristicType = heuristicType;
     this.boardSize = boardSize;
@@ -52,7 +56,8 @@ class PuzzleGame extends ChangeNotifier {
     maxDistance = pow(boardSize.item1, 2);
     if (maxDistance.isOdd) maxDistance--;
     maxDistance -= ((boardSize.item1 - 1) * 2);
-
+    this.tilesDifferenceIsSelected = tilesDifferenceIsSelected;
+    this.manhattanDistanceIsSelected = manhattanDistanceIsSelected;
     notifyListeners();
     return true;
   }
@@ -146,46 +151,30 @@ class PuzzleGame extends ChangeNotifier {
       (maxDistance - computeHeuristic2(gameBoard)) / (maxDistance.toDouble());
 
   double get progress2 =>
-      (maxDifference - computeHeuristic1(gameBoard)) / (maxDifference.toDouble());
-
-  int computeHeuristic3(PuzzleBoard puzzleBoard) {
-    //TODO: not implemented yet
-    return 0;
-  }
+      (maxDifference - computeHeuristic1(gameBoard)) /
+      (maxDifference.toDouble());
 
   int computeHeuristic(PuzzleBoard puzzleBoard) {
     int toReturn = 0;
 
-    toReturn += computeHeuristic1(puzzleBoard);
-    switch (heuristicType) {
-      case HeuristicType.tilesDifferences:
-        toReturn += computeHeuristic1(puzzleBoard);
-        break;
-      case HeuristicType.manhattanDistance:
-        toReturn += computeHeuristic2(puzzleBoard);
-        break;
-      case HeuristicType.nilssonSequenceScore:
-        toReturn = computeHeuristic3(puzzleBoard);
-        break;
-    }
+    if (tilesDifferenceIsSelected) toReturn += computeHeuristic1(puzzleBoard);
+    if (manhattanDistanceIsSelected) toReturn += computeHeuristic2(puzzleBoard);
     return toReturn;
   }
 
-  static int computeHeuristicStatic(PuzzleBoard puzzleBoard,
-      PuzzleBoard goalBoard, PuzzleBoard secondGoal, HeuristicType algorithm) {
+  static int computeHeuristicStatic(
+      PuzzleBoard puzzleBoard,
+      PuzzleBoard goalBoard,
+      PuzzleBoard secondGoal,
+      bool tilesDifferenceIsSelected,
+      bool manhattanDistanceIsSelected) {
     int toReturn = 0;
 
-    toReturn += computeHeuristic1Static(puzzleBoard, goalBoard, secondGoal);
-    switch (algorithm) {
-      case HeuristicType.tilesDifferences:
-        toReturn += computeHeuristic1Static(puzzleBoard, goalBoard, secondGoal);
-        break;
-      case HeuristicType.manhattanDistance:
-        toReturn += computeHeuristic2Static(puzzleBoard, goalBoard, secondGoal);
-        break;
-      case HeuristicType.nilssonSequenceScore:
-        break;
-    }
+    if (tilesDifferenceIsSelected)
+      toReturn += computeHeuristic1Static(puzzleBoard, goalBoard, secondGoal);
+    if (manhattanDistanceIsSelected)
+      toReturn += computeHeuristic2Static(puzzleBoard, goalBoard, secondGoal);
+
     return toReturn;
   }
 
@@ -251,13 +240,10 @@ class PuzzleGame extends ChangeNotifier {
         steps2 = []
           ..addAll(best.recommendedSteps1)
           ..add(child);
-//        steps = Queue.of(best.recommendedSteps.whereType<PuzzleBoard>());
-//        steps.add(child);
         childEntity = QueueEntityBoard(
             currentBoard: child,
             cost: cost,
             heuristic: heuristic,
-//            recommendedSteps: steps,
             recommendedSteps1: steps2);
         insideOpen = open.containsObject(childEntity);
         if (insideOpen == null && !closeList.containsKey(child)) {
@@ -280,7 +266,8 @@ class PuzzleGame extends ChangeNotifier {
     PuzzleBoard puzzleState = args['puzzleState'];
     PuzzleBoard goalState = args['goalState'];
     PuzzleBoard secondGoalState = args['secondGoalState'];
-    HeuristicType algorithm = args['algorithm'];
+    bool tilesDifferenceIsSelected = args['tilesDifferenceIsSelected'];
+    bool manhattanDistanceIsSelected = args['manhattanDistanceIsSelected'];
 
     ModifiedHeapPriorityQueue<QueueEntityBoard> open =
         ModifiedHeapPriorityQueue(isEqualStatic, compareStatic);
@@ -288,7 +275,12 @@ class PuzzleGame extends ChangeNotifier {
 
     int cost = 0,
         heuristic = computeHeuristicStatic(
-            puzzleState, goalState, secondGoalState, algorithm);
+          puzzleState,
+          goalState,
+          secondGoalState,
+          tilesDifferenceIsSelected,
+          manhattanDistanceIsSelected,
+        );
 //    Queue<PuzzleBoard> steps = Queue<PuzzleBoard>();
     List<PuzzleBoard> steps2 = [];
     QueueEntityBoard best = QueueEntityBoard(
@@ -318,7 +310,12 @@ class PuzzleGame extends ChangeNotifier {
         if (best.recommendedSteps1.length != 0 &&
             child == best.recommendedSteps1.last) continue;
         heuristic = computeHeuristicStatic(
-            child, goalState, secondGoalState, algorithm);
+          child,
+          goalState,
+          secondGoalState,
+          tilesDifferenceIsSelected,
+          manhattanDistanceIsSelected,
+        );
         steps2 = []
           ..addAll(best.recommendedSteps1)
           ..add(child);
@@ -379,7 +376,9 @@ class PuzzleGame extends ChangeNotifier {
     args['puzzleState'] = this.gameBoard;
     args['goalState'] = this.theGoalBoard;
     args['secondGoalState'] = this.secondGoal;
-    args['algorithm'] = this.heuristicType;
+    args['tilesDifferenceIsSelected'] = this.tilesDifferenceIsSelected;
+    args['manhattanDistanceIsSelected'] = this.manhattanDistanceIsSelected;
+
     return compute(aStarAlgortihmStatic, args);
   }
 
