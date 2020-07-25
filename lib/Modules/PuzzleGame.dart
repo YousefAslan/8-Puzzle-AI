@@ -236,8 +236,8 @@ class PuzzleGame extends ChangeNotifier {
       cost = best.cost + 1;
       children = best.currentBoard.getAvailableMoves();
       for (PuzzleBoard child in children) {
-        if (best.recommendedSteps1.length != 0 &&
-            child == best.recommendedSteps1.last) continue;
+        if (best.recommendedSteps1.length > 1 && // length-1
+            child == best.recommendedSteps1[best.recommendedSteps1.length-2]) continue;
         heuristic = computeHeuristic(child);
         steps2 = []
           ..addAll(best.recommendedSteps1)
@@ -296,21 +296,21 @@ class PuzzleGame extends ChangeNotifier {
     List<PuzzleBoard> children;
     QueueEntityBoard childEntity, insideOpen;
 
-//    int j = 0;
+    int j = 0;
     while (open.isNotEmpty) {
-//      print("iteration #${j++}");
+      print("iteration #${j++}");
       best = open.removeFirst();
       if (best.currentBoard == goalState ||
           best.currentBoard == secondGoalState) {
-//        print("find solution${best.currentBoard}");
+        print("find solution${best.recommendedSteps1.length}");
 //        return best.recommendedSteps;
         return best.recommendedSteps1;
       }
       cost = best.cost + 1;
       children = best.currentBoard.getAvailableMoves();
       for (PuzzleBoard child in children) {
-        if (best.recommendedSteps1.length != 0 &&
-            child == best.recommendedSteps1.last) continue;
+        if (best.recommendedSteps1.length > 1 &&
+            child == best.recommendedSteps1[best.recommendedSteps1.length -2]) continue;
         heuristic = computeHeuristicStatic(
           child,
           goalState,
