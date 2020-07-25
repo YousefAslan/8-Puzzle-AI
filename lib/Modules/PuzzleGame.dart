@@ -360,7 +360,8 @@ class PuzzleGame extends ChangeNotifier {
     args['puzzleState'] = this.gameBoard;
     args['goalState'] = this.theGoalBoard;
     args['secondGoalState'] = this.secondGoal;
-    args['algorithm'] = this.heuristicType;
+    args['tilesDifferenceIsSelected'] = this.tilesDifferenceIsSelected;
+    args['manhattanDistanceIsSelected'] = this.manhattanDistanceIsSelected;
     List solution = await compute(aStarAlgortihmStatic, args);
     PuzzleBoard nextState;
     if (solution.length > 0) nextState = solution[0];
