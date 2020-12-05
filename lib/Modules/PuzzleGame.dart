@@ -296,13 +296,13 @@ class PuzzleGame extends ChangeNotifier {
     List<PuzzleBoard> children;
     QueueEntityBoard childEntity, insideOpen;
 
-    int j = 0;
+//    int j = 0;
     while (open.isNotEmpty) {
-      print("iteration #${j++}");
+//      print("iteration #${j++}");
       best = open.removeFirst();
       if (best.currentBoard == goalState ||
           best.currentBoard == secondGoalState) {
-        print("find solution${best.recommendedSteps1.length}");
+//        print("find solution${best.recommendedSteps1.length}");
 //        return best.recommendedSteps;
         return best.recommendedSteps1;
       }
